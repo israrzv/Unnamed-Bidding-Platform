@@ -1,83 +1,53 @@
 # BidFair — Team Setup
 
-Two paths depending on what a teammate needs. Most people only need **Path 1**.
+Monorepo with three parts: `frontend/` (Next.js + Supabase auth), `backend/`
+(Go API), and `supabase/` (database schema).
 
 ---
 
-## Path 1 — Run the app against the shared Supabase (recommended)
+## 1. Frontend (Next.js)
 
-This lets a teammate run the full app locally while using the same hosted
-Supabase project (same database, same users).
+```bash
+cd frontend
+npm install
+cp .env.example .env.local     # values are pre-filled (public keys only)
+npm run dev
+```
+Open http://localhost:3000
 
-### Steps
-1. Install [Node.js](https://nodejs.org) (v20+).
-2. Clone the repo and install dependencies:
-   ```bash
-   npm install
-   ```
-3. Copy the env template and it's ready to go (the values are already filled in):
-   ```bash
-   cp .env.example .env.local
-   ```
-4. Start the dev server:
-   ```bash
-   npm run dev
-   ```
-5. Open http://localhost:3000
-
-### Getting Supabase dashboard access
-To see the database, users, and auth settings in the Supabase dashboard, the
-project owner invites them:
-- Supabase dashboard → **Organization Settings → Team → Invite member** (by email).
-
-That's it. No MCP or Docker needed for normal development.
+Needs: Node.js 20+.
 
 ---
 
-## Path 2 — Local Supabase + Kiro MCP tooling (optional, advanced)
+## 2. Backend (Go)
 
-Only needed if a teammate wants to run a **local** Supabase stack and use the
-Supabase MCP tools inside Kiro (for schema work, migrations, etc.). This runs
-entirely on their machine and is independent of the hosted project.
+```bash
+cd backend
+cp .env.example .env           # fill in DATABASE_URL + SUPABASE_JWT_SECRET
+go mod tidy
+go run ./cmd/server
+```
+API runs on http://localhost:8080. See `backend/README.md` for endpoints.
 
-### Prerequisites
-1. **Docker Desktop** — https://www.docker.com/products/docker-desktop (must be running).
-2. **Supabase CLI** — https://supabase.com/docs/guides/cli
-3. **Kiro** with the **supabase-local** power installed (Kiro → Powers panel → install "supabase-local").
-
-### Steps
-1. From the repo root, start the local stack:
-   ```bash
-   supabase start
-   ```
-   This spins up a local Postgres + Supabase API (default at `http://127.0.0.1:54321`).
-2. Kiro's MCP config (`~/.kiro/settings/mcp.json`) is managed by the power and
-   points at the local stack:
-   ```json
-   {
-     "powers": {
-       "mcpServers": {
-         "power-supabase-local-supabase": {
-           "url": "http://127.0.0.1:54321/mcp",
-           "disabled": false
-         }
-       }
-     }
-   }
-   ```
-3. Apply the project schema to the local stack (migrations live in `supabase/migrations/`).
-4. Reconnect the MCP server in Kiro if needed: command palette →
-   "Kiro: Focus on MCP Servers View".
-
-> Note: the MCP URL is `127.0.0.1` — it only ever talks to *that developer's own*
-> local Supabase. It is not a shared connection and cannot be handed to someone
-> as a file. Each developer sets it up on their own machine.
+Needs: Go 1.23+ (https://go.dev/dl/). Get the JWT secret from
+Supabase → Settings → API → JWT Settings.
 
 ---
 
-## What NOT to share
-- The **secret** Supabase key (`sb_secret_...`) — full access, bypasses security.
-- The **database password** / `DATABASE_URL` / `DIRECT_URL` — keep in `.env` only.
-- The Google **Client Secret** (`GOCSPX-...`) — lives in Supabase + `.env` only.
+## 3. Database (Supabase)
 
-The publishable key (`sb_publishable_...`) and project URL are safe to share.
+- Schema lives in `supabase/migrations/`.
+- To get dashboard access, the project owner invites you:
+  Supabase → Organization Settings → Team → Invite member.
+- Apply schema changes via the Supabase SQL Editor (paste the migration SQL) or
+  the Supabase CLI.
+
+---
+
+## What NOT to commit / share
+- `backend/.env` — DB password + JWT secret.
+- `frontend/.env.local` — safe values, but keep it out of git anyway.
+- The Supabase **secret** key (`sb_secret_...`) and the Google **client secret**.
+
+Safe to share: the Supabase **publishable** key (`sb_publishable_...`) and the
+project URL — these already live in `frontend/.env.example`.

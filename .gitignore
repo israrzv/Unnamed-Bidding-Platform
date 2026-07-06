@@ -1,18 +1,22 @@
-node_modules
-.next
-out
-build
+# dependencies
+**/node_modules/
+
+# next.js (frontend)
+frontend/.next/
+frontend/out/
+frontend/build/
+frontend/next-env.d.ts
+
+# go (backend)
+backend/bin/
+backend/server
+backend/*.exe
+
+# env files — never commit secrets; examples are allowed
+**/.env
+**/.env.*
+!**/.env.example
+
+# logs / os
 *.log
-
-# env
-.env
-.env*.local
-.env.local
-
-# database
-prisma/*.db
-prisma/*.db-journal
-
-# misc
 .DS_Store
-next-env.d.ts

@@ -20,7 +20,12 @@ export function BidForm() {
     }
 
     setLoading(true);
-    const res = await fetch("/api/bid", {
+    // TODO(go): POST {NEXT_PUBLIC_API_URL}/bids with the Supabase JWT:
+    //   const { data: { session } } = await createClient().auth.getSession();
+    //   headers: { Authorization: `Bearer ${session.access_token}` }
+    // The Go backend verifies the token and enforces one-bid-per-user.
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "";
+    const res = await fetch(`${apiUrl}/bids`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ amount }),
