@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 export function BidForm() {
   const router = useRouter();
@@ -20,17 +21,28 @@ export function BidForm() {
     }
 
     setLoading(true);
-    // TODO(go): POST {NEXT_PUBLIC_API_URL}/bids with the Supabase JWT:
-    //   const { data: { session } } = await createClient().auth.getSession();
-    //   headers: { Authorization: `Bearer ${session.access_token}` }
-    // The Go backend verifies the token and enforces one-bid-per-user.
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "";
+
+    // Get the current Supabase access token to authenticate with the Go API.
+    const supabase = createClient();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    if (!session) {
+      setLoading(false);
+      setError("Your session expired. Please log in again.");
+      return;
+    }
+
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
     const res = await fetch(`${apiUrl}/bids`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session.access_token}`,
+      },
       body: JSON.stringify({ amount }),
     });
-    const data = await res.json();
+    const data = await res.json().catch(() => ({}));
     setLoading(false);
 
     if (!res.ok) {

@@ -1,16 +1,12 @@
 /**
- * Data access for auctions/bids.
+ * Data access for auctions/bids — thin client over the Go backend API.
  *
- * ⚠️ BACKEND MOVED TO GO ⚠️
- * The previous Supabase queries were removed. These functions are now thin
- * clients that will call the Go backend API. They currently return empty data
- * so the frontend keeps building; wire each one to the Go endpoint as it lands.
- *
- * Auth stays on the frontend via Supabase — the browser gets a Supabase JWT and
- * sends it to Go as `Authorization: Bearer <token>`; Go verifies it.
+ * Auth stays on the frontend via Supabase: the browser gets a Supabase JWT and
+ * sends it to Go as `Authorization: Bearer <token>` for writes (see BidForm).
+ * These read functions run server-side and hit the public Go endpoints.
  */
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? ""; // e.g. http://localhost:8080
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
 
 export type Auction = {
   id: string;
@@ -30,36 +26,45 @@ export type RankedBid = {
   isWinning: boolean;
 };
 
-/** GET {API_URL}/auctions/active — the single active auction. */
-export async function getActiveAuction(): Promise<Auction | null> {
-  // TODO(go): fetch(`${API_URL}/auctions/active`)
-  return null;
+async function getJSON<T>(path: string, fallback: T): Promise<T> {
+  try {
+    const res = await fetch(`${API_URL}${path}`, { cache: "no-store" });
+    if (!res.ok) return fallback;
+    const text = await res.text();
+    if (!text) return fallback;
+    return JSON.parse(text) as T;
+  } catch {
+    return fallback;
+  }
 }
 
-/** GET {API_URL}/auctions?open=true — open auctions with live participant counts. */
+/** The single active auction, or null if none is open. */
+export async function getActiveAuction(): Promise<Auction | null> {
+  return getJSON<Auction | null>("/auctions/active", null);
+}
+
+/** Open auctions with live participant counts. Drives the home ticker. */
 export async function getOpenAuctionsWithCounts(): Promise<
   { id: string; title: string; ticketCount: number; liveCount: number }[]
 > {
-  // TODO(go): fetch(`${API_URL}/auctions?open=true`)
-  return [];
+  return getJSON("/auctions", []);
 }
 
-/** GET {API_URL}/auctions/{id}/bids?ranked=true — ranked bids for an auction. */
+/** Ranked bids for an auction; the top `ticketCount` are flagged winning. */
 export async function getRankedBids(
-  _auctionId: string,
+  auctionId: string,
   _ticketCount: number
 ): Promise<RankedBid[]> {
-  // TODO(go): fetch(`${API_URL}/auctions/${_auctionId}/bids?ranked=true`)
-  return [];
+  return getJSON<RankedBid[]>(`/auctions/${auctionId}/bids`, []);
 }
 
-/** GET {API_URL}/auctions/{id}/bids?recent=true — recent bids for the live ticker. */
+/** Recent bids for the in-auction ticker (reuses the ranked list). */
 export async function getRecentBids(
-  _auctionId: string,
-  _take = 20
+  auctionId: string,
+  take = 20
 ): Promise<{ username: string; amount: number }[]> {
-  // TODO(go): fetch(`${API_URL}/auctions/${_auctionId}/bids?recent=true`)
-  return [];
+  const bids = await getJSON<RankedBid[]>(`/auctions/${auctionId}/bids`, []);
+  return bids.slice(0, take).map((b) => ({ username: b.username, amount: b.amount }));
 }
 
 /** Formats an integer amount (cents) into a currency string. */

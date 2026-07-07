@@ -16,35 +16,26 @@ const userIDKey ctxKey = "userID"
 // `Authorization: Bearer <token>` and puts the user id (the token "sub") into
 // the request context.
 //
-// This implementation validates HS256 tokens using the project's JWT secret
-// (Supabase dashboard → Settings → API → JWT Settings → "JWT Secret").
-//
-// TODO: If your project uses the newer asymmetric signing keys (RS256/ES256),
-// switch to JWKS-based verification against:
-//
-//	https://<project-ref>.supabase.co/auth/v1/.well-known/jwks.json
-func Auth(jwtSecret string) func(http.Handler) http.Handler {
+// Verification uses the project's JWKS (asymmetric ES256/RS256 keys), so no
+// shared secret is needed. The keyfunc is built from the JWKS URL in main.
+func Auth(keyfn jwt.Keyfunc) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			header := r.Header.Get("Authorization")
-			token := strings.TrimPrefix(header, "Bearer ")
-			if token == "" || token == header {
+			tokenStr := strings.TrimPrefix(header, "Bearer ")
+			if tokenStr == "" || tokenStr == header {
 				http.Error(w, "missing bearer token", http.StatusUnauthorized)
 				return
 			}
 
-			parsed, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
-				if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
-					return nil, jwt.ErrSignatureInvalid
-				}
-				return []byte(jwtSecret), nil
-			})
-			if err != nil || !parsed.Valid {
+			token, err := jwt.Parse(tokenStr, keyfn,
+				jwt.WithValidMethods([]string{"ES256", "RS256"}))
+			if err != nil || !token.Valid {
 				http.Error(w, "invalid token", http.StatusUnauthorized)
 				return
 			}
 
-			claims, ok := parsed.Claims.(jwt.MapClaims)
+			claims, ok := token.Claims.(jwt.MapClaims)
 			if !ok {
 				http.Error(w, "invalid claims", http.StatusUnauthorized)
 				return

@@ -23,7 +23,7 @@ backend/
 
 ## Run
 ```bash
-cp .env.example .env    # then fill in DATABASE_URL and SUPABASE_JWT_SECRET
+cp .env.example .env    # then fill in DATABASE_URL and SUPABASE_URL
 go mod tidy             # resolve dependencies
 go run ./cmd/server
 ```
@@ -39,10 +39,9 @@ Server starts on `http://localhost:8080`.
 | POST   | `/bids`                | yes  | place a bid (one per user)       |
 
 ## Auth note
-The JWT middleware currently validates **HS256** tokens using
-`SUPABASE_JWT_SECRET`. If your Supabase project uses the newer **asymmetric**
-signing keys, switch `internal/middleware/auth.go` to verify against the JWKS
-endpoint: `https://<project-ref>.supabase.co/auth/v1/.well-known/jwks.json`.
+The JWT middleware verifies tokens against the project's **JWKS** (asymmetric
+ES256/RS256 keys) fetched from `${SUPABASE_URL}/auth/v1/.well-known/jwks.json`.
+No shared secret is needed — set `SUPABASE_URL` and it works.
 
 ## Prerequisite
 Go 1.23+ must be installed: https://go.dev/dl/

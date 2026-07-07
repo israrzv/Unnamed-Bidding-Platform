@@ -6,6 +6,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	chimw "github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	"github.com/israrzv/Unnamed-Bidding-Platform/backend/internal/config"
@@ -14,7 +15,7 @@ import (
 )
 
 // New builds the HTTP router with all routes and middleware.
-func New(cfg *config.Config, pool *pgxpool.Pool) http.Handler {
+func New(cfg *config.Config, pool *pgxpool.Pool, keyfn jwt.Keyfunc) http.Handler {
 	r := chi.NewRouter()
 
 	r.Use(chimw.RequestID)
@@ -44,7 +45,7 @@ func New(cfg *config.Config, pool *pgxpool.Pool) http.Handler {
 
 	// Protected writes — require a valid Supabase JWT.
 	r.Group(func(r chi.Router) {
-		r.Use(mw.Auth(cfg.SupabaseJWTSecret))
+		r.Use(mw.Auth(keyfn))
 		r.Post("/bids", h.PlaceBid)
 	})
 
