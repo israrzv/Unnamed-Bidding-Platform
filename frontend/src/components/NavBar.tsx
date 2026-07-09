@@ -1,49 +1,22 @@
-import Link from "next/link";
 import { getCurrentUser } from "@/lib/auth";
-import { LogoutButton } from "@/components/LogoutButton";
+import { NavMenu, MobileNavLinks } from "@/components/NavMenu";
 
-export async function NavBar() {
+function initialsFrom(name: string): string {
+  const parts = name.replace(/[^a-zA-Z0-9 ]/g, "").trim().split(/\s+/);
+  if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+  return name.slice(0, 2).toUpperCase();
+}
+
+export async function Navbar() {
   const user = await getCurrentUser();
+  const initials = user ? initialsFrom(user.username || user.email || "user") : null;
 
   return (
-    <header className="border-b border-slate-800 bg-slate-900/60 backdrop-blur">
-      <nav className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
-        <Link href="/" className="text-lg font-bold tracking-tight text-white">
-          Bid<span className="text-brand">Fair</span>
-        </Link>
-
-        <div className="flex items-center gap-1 text-sm">
-          <Link href="/" className="rounded-md px-3 py-2 text-slate-300 hover:bg-slate-800 hover:text-white">
-            Home
-          </Link>
-          <Link href="/bid" className="rounded-md px-3 py-2 text-slate-300 hover:bg-slate-800 hover:text-white">
-            Bid
-          </Link>
-          <Link href="/leaderboard" className="rounded-md px-3 py-2 text-slate-300 hover:bg-slate-800 hover:text-white">
-            Leaderboard
-          </Link>
-          {user ? (
-            <>
-              <Link href="/profile" className="rounded-md px-3 py-2 text-slate-300 hover:bg-slate-800 hover:text-white">
-                {user.username}
-              </Link>
-              <LogoutButton />
-            </>
-          ) : (
-            <>
-              <Link href="/login" className="rounded-md px-3 py-2 text-slate-300 hover:bg-slate-800 hover:text-white">
-                Log in
-              </Link>
-              <Link
-                href="/register"
-                className="rounded-md bg-brand px-3 py-2 font-medium text-white shadow-[0_0_15px_rgba(124,58,237,0.3)] transition-all hover:bg-brand-dark hover:shadow-[0_0_25px_rgba(124,58,237,0.6)]"
-              >
-                Sign up
-              </Link>
-            </>
-          )}
-        </div>
+    <header className="sticky top-0 z-40 border-b border-zinc-800/80 bg-zinc-950/70 backdrop-blur-md">
+      <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
+        <NavMenu initials={initials} />
       </nav>
+      <MobileNavLinks />
     </header>
   );
 }

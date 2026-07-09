@@ -1,12 +1,11 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  content: [
-    "./src/**/*.{js,ts,jsx,tsx,mdx}",
-  ],
+  content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
   theme: {
     extend: {
       colors: {
+        // Kept for the preserved data-wired pages; aligned to the violet accent.
         brand: {
           DEFAULT: "#7c3aed",
           dark: "#6d28d9",

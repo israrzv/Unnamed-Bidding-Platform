@@ -1,114 +1,104 @@
 import Link from "next/link";
-import {
-  getActiveAuction,
-  getOpenAuctionsWithCounts,
-} from "@/lib/auction";
-import { Marquee } from "@/components/Marquee";
 
-export const dynamic = "force-dynamic";
+const CARD = "rounded-xl border border-zinc-800/80 bg-zinc-900/40 backdrop-blur-md";
 
-export default async function HomePage() {
-  const auction = await getActiveAuction();
-  const openAuctions = await getOpenAuctionsWithCounts();
-  const bidCount = auction
-    ? openAuctions.find((a) => a.id === auction.id)?.liveCount ?? 0
-    : 0;
-  const tickerItems = openAuctions.map((a) => (
-    <span key={a.id}>
-      <span className="text-brand-light">🔴 {a.title}</span>
-      <span className="ml-2 text-slate-400">
-        — {a.liveCount} {a.liveCount === 1 ? "person" : "people"} live
-      </span>
-    </span>
-  ));
-
+export default function HomePage() {
   return (
-    <div className="space-y-10">
-      {tickerItems.length > 0 && <Marquee items={tickerItems} />}
+    <div className="space-y-8">
+      {/* Header */}
+      <section className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+        <div>
+          <p className="text-sm font-medium text-violet-400">Command Center</p>
+          <h1 className="mt-1 text-3xl font-bold tracking-tight text-white">
+            Welcome back, Dev
+          </h1>
+          <p className="mt-1 text-zinc-400">
+            Here&apos;s your escrow, your savings, and the arenas you&apos;re in.
+          </p>
+        </div>
+        <Link
+          href="/bidding"
+          className="inline-flex items-center justify-center rounded-lg bg-violet-600 px-5 py-3 text-sm font-semibold text-white shadow-[0_0_15px_rgba(124,58,237,0.2)] transition-all duration-300 hover:bg-violet-700 hover:shadow-[0_0_25px_rgba(124,58,237,0.5)]"
+        >
+          Enter the Arena
+        </Link>
+      </section>
 
-      <section className="space-y-4">
-        <h1 className="text-4xl font-bold tracking-tight">
-          Fair tickets. <span className="text-brand">No scalpers.</span>
-        </h1>
-        <p className="max-w-2xl text-lg text-slate-400">
-          Everyone places a single sealed bid. When the sale closes, the top
-          bidders win the tickets. One bid per person, ranked transparently on
-          the leaderboard.
-        </p>
-        <div className="flex gap-3">
-          <Link
-            href="/bid"
-            className="rounded-lg bg-brand px-5 py-3 font-medium text-white shadow-[0_0_15px_rgba(124,58,237,0.3)] transition-all hover:bg-brand-dark hover:shadow-[0_0_25px_rgba(124,58,237,0.6)]"
-          >
-            Place your bid
-          </Link>
-          <Link
-            href="/leaderboard"
-            className="rounded-lg border border-slate-700 px-5 py-3 font-medium text-slate-200 hover:bg-slate-800"
-          >
-            View leaderboard
-          </Link>
+      {/* Metric cards */}
+      <section className="grid gap-5 md:grid-cols-3">
+        {/* Locked Escrow Vault */}
+        <div className={`${CARD} p-6`}>
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-zinc-400">Locked Escrow Vault</span>
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-cyan-500/10 text-cyan-400">
+              🔒
+            </span>
+          </div>
+          <p className="mt-4 text-3xl font-bold text-cyan-400">₹24,500</p>
+          <p className="mt-1 text-xs text-zinc-500">Held securely across 2 active bids</p>
+        </div>
+
+        {/* Saved from Scalpers */}
+        <div className={`${CARD} p-6`}>
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-zinc-400">Saved from Scalpers</span>
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-500/10 text-violet-400">
+              🛡️
+            </span>
+          </div>
+          <p className="mt-4 text-3xl font-bold text-white">₹11,200</p>
+          <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-zinc-800">
+            <div className="h-full w-3/4 rounded-full bg-gradient-to-r from-violet-500 to-cyan-400" />
+          </div>
+          <p className="mt-2 text-xs text-zinc-500">Level 4 Fair Buyer · 75% to next tier</p>
+        </div>
+
+        {/* Active Arenas */}
+        <div className={`${CARD} p-6`}>
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-zinc-400">Active Arenas</span>
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-cyan-500/10 text-cyan-400">
+              🏟️
+            </span>
+          </div>
+          <p className="mt-4 text-3xl font-bold text-white">2</p>
+          <p className="mt-1 text-xs text-zinc-500">Events you&apos;re currently bidding in</p>
         </div>
       </section>
 
-      {auction ? (
-        <section className="rounded-xl border border-slate-800 bg-slate-900/50 p-6">
-          <div className="flex items-center justify-between gap-4">
-            <h2 className="text-sm font-medium uppercase tracking-wide text-brand-light">
-              Current sale
-            </h2>
-            {auction.isOpen ? (
-              <span className="animate-pulse rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-400">
-                ● Live now
-              </span>
-            ) : (
-              <span className="rounded-full border border-slate-700 bg-slate-800/60 px-3 py-1 text-xs font-medium text-slate-400">
-                Closed
-              </span>
-            )}
-          </div>
-          <p className="mt-1 text-2xl font-semibold">{auction.title}</p>
-          {auction.description && (
-            <p className="mt-2 text-slate-400">{auction.description}</p>
-          )}
-          <dl className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3">
-            <Stat label="Tickets available" value={auction.ticketCount.toString()} />
-            <Stat label="Bids placed" value={bidCount.toString()} />
-            <Stat label="Status" value={auction.isOpen ? "Open" : "Closed"} />
-          </dl>
-        </section>
-      ) : (
-        <section className="rounded-xl border border-slate-800 bg-slate-900/50 p-6 text-slate-400">
-          No active sale right now. Check back soon.
-        </section>
-      )}
-
-      <section className="grid gap-4 sm:grid-cols-3">
-        <HowItWorks step="1" title="Sign up" body="Create an account to place a bid tied to your identity." />
-        <HowItWorks step="2" title="Bid once" body="Submit a single sealed bid. You can't bid twice." />
-        <HowItWorks step="3" title="Top bids win" body="When the sale closes, the highest N bids get tickets." />
+      {/* Active positions */}
+      <section className={`${CARD} p-6`}>
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-white">Your Active Positions</h2>
+          <span className="rounded-full border border-cyan-500/20 bg-cyan-500/10 px-3 py-1 text-xs font-medium text-cyan-400">
+            Live
+          </span>
+        </div>
+        <div className="mt-5 divide-y divide-zinc-800/80">
+          {[
+            { event: "Neon Nights — Arena Drop", bid: "₹12,000", rank: 38, winning: true },
+            { event: "Midnight Circuit — GA", bid: "₹12,500", rank: 142, winning: false },
+          ].map((pos) => (
+            <div key={pos.event} className="flex items-center justify-between py-4">
+              <div>
+                <p className="font-medium text-white">{pos.event}</p>
+                <p className="text-sm text-zinc-500">
+                  Your bid <span className="text-zinc-300">{pos.bid}</span> · Rank #{pos.rank}
+                </p>
+              </div>
+              {pos.winning ? (
+                <span className="rounded-full bg-cyan-500/10 px-3 py-1 text-xs font-medium text-cyan-400">
+                  In the winning zone
+                </span>
+              ) : (
+                <span className="rounded-full bg-rose-500/10 px-3 py-1 text-xs font-medium text-rose-500">
+                  Below cutoff
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
       </section>
-    </div>
-  );
-}
-
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <div>
-      <dt className="text-sm text-slate-500">{label}</dt>
-      <dd className="text-xl font-semibold text-white">{value}</dd>
-    </div>
-  );
-}
-
-function HowItWorks({ step, title, body }: { step: string; title: string; body: string }) {
-  return (
-    <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-5">
-      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand text-sm font-bold text-white">
-        {step}
-      </div>
-      <h3 className="mt-3 font-semibold">{title}</h3>
-      <p className="mt-1 text-sm text-slate-400">{body}</p>
     </div>
   );
 }

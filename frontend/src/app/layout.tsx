@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { NavBar } from "@/components/NavBar";
+import { LiveTicker } from "@/components/LiveTicker";
+import { Navbar } from "@/components/NavBar";
 
 export const metadata: Metadata = {
-  title: "BidFair — Fair single-bid ticket auctions",
-  description: "A fair, anti-scalping bidding platform. Bid once, top bids win.",
+  title: "BidFair — Single-bid escrow ticketing",
+  description:
+    "A high-stakes, single-bid escrow ticketing platform for exclusive live events.",
 };
 
 export default function RootLayout({
@@ -15,8 +17,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <NavBar />
-        <main className="mx-auto max-w-5xl px-4 py-8">{children}</main>
+        <LiveTicker />
+        <Navbar />
+        <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">{children}</main>
       </body>
     </html>
   );
