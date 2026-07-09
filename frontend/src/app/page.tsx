@@ -1,102 +1,64 @@
 import Link from "next/link";
+import { Wallet, Music2, Disc3, Tent, Mic2, Trophy, Drama } from "lucide-react";
+import { ActiveArenas } from "@/components/ActiveArenas";
 
 const CARD = "rounded-xl border border-zinc-800/80 bg-zinc-900/40 backdrop-blur-md";
 
+const CATEGORIES = [
+  { name: "Concerts", count: "4 live", Icon: Music2, from: "from-violet-600/40", to: "to-fuchsia-600/20" },
+  { name: "Club Nights", count: "2 live", Icon: Disc3, from: "from-cyan-500/40", to: "to-blue-600/20" },
+  { name: "Festivals", count: "1 upcoming", Icon: Tent, from: "from-emerald-500/40", to: "to-teal-600/20" },
+  { name: "Comedy", count: "3 upcoming", Icon: Mic2, from: "from-amber-500/40", to: "to-orange-600/20" },
+  { name: "Sports", count: "1 live", Icon: Trophy, from: "from-rose-500/40", to: "to-red-600/20" },
+  { name: "Theatre", count: "2 upcoming", Icon: Drama, from: "from-indigo-500/40", to: "to-purple-600/20" },
+];
+
 export default function HomePage() {
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <section className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-        <div>
-          <p className="text-sm font-medium text-violet-400">Command Center</p>
-          <h1 className="mt-1 text-3xl font-bold tracking-tight text-white">
-            Welcome back, Dev
-          </h1>
-          <p className="mt-1 text-zinc-400">
-            Here&apos;s your escrow, your savings, and the arenas you&apos;re in.
-          </p>
-        </div>
-        <Link
-          href="/bidding"
-          className="inline-flex items-center justify-center rounded-lg bg-violet-600 px-5 py-3 text-sm font-semibold text-white shadow-[0_0_15px_rgba(124,58,237,0.2)] transition-all duration-300 hover:bg-violet-700 hover:shadow-[0_0_25px_rgba(124,58,237,0.5)]"
-        >
-          Enter the Arena
-        </Link>
+    <div className="space-y-12">
+      <section>
+        <h1 className="text-2xl font-semibold tracking-tight text-white">Command Center</h1>
+        <p className="mt-1 text-zinc-400">Your allocations, your escrow, at a glance.</p>
       </section>
 
-      {/* Metric cards */}
-      <section className="grid gap-5 md:grid-cols-3">
-        {/* Locked Escrow Vault */}
-        <div className={`${CARD} p-6`}>
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-zinc-400">Locked Escrow Vault</span>
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-cyan-500/10 text-cyan-400">
-              🔒
-            </span>
-          </div>
-          <p className="mt-4 text-3xl font-bold text-cyan-400">₹24,500</p>
-          <p className="mt-1 text-xs text-zinc-500">Held securely across 2 active bids</p>
-        </div>
+      <ActiveArenas />
 
-        {/* Saved from Scalpers */}
-        <div className={`${CARD} p-6`}>
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-zinc-400">Saved from Scalpers</span>
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-500/10 text-violet-400">
-              🛡️
-            </span>
-          </div>
-          <p className="mt-4 text-3xl font-bold text-white">₹11,200</p>
-          <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-zinc-800">
-            <div className="h-full w-3/4 rounded-full bg-gradient-to-r from-violet-500 to-cyan-400" />
-          </div>
-          <p className="mt-2 text-xs text-zinc-500">Level 4 Fair Buyer · 75% to next tier</p>
-        </div>
-
-        {/* Active Arenas */}
-        <div className={`${CARD} p-6`}>
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-zinc-400">Active Arenas</span>
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-cyan-500/10 text-cyan-400">
-              🏟️
-            </span>
-          </div>
-          <p className="mt-4 text-3xl font-bold text-white">2</p>
-          <p className="mt-1 text-xs text-zinc-500">Events you&apos;re currently bidding in</p>
-        </div>
-      </section>
-
-      {/* Active positions */}
-      <section className={`${CARD} p-6`}>
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-white">Your Active Positions</h2>
-          <span className="rounded-full border border-cyan-500/20 bg-cyan-500/10 px-3 py-1 text-xs font-medium text-cyan-400">
-            Live
-          </span>
-        </div>
-        <div className="mt-5 divide-y divide-zinc-800/80">
-          {[
-            { event: "Neon Nights — Arena Drop", bid: "₹12,000", rank: 38, winning: true },
-            { event: "Midnight Circuit — GA", bid: "₹12,500", rank: 142, winning: false },
-          ].map((pos) => (
-            <div key={pos.event} className="flex items-center justify-between py-4">
-              <div>
-                <p className="font-medium text-white">{pos.event}</p>
-                <p className="text-sm text-zinc-500">
-                  Your bid <span className="text-zinc-300">{pos.bid}</span> · Rank #{pos.rank}
-                </p>
+      {/* Categories with imagery */}
+      <section>
+        <h2 className="border-b border-zinc-800/80 pb-3 text-xs font-medium uppercase tracking-widest text-zinc-500">
+          Browse by category
+        </h2>
+        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+          {CATEGORIES.map(({ name, count, Icon, from, to }) => (
+            <Link
+              key={name}
+              href="/events"
+              className="group overflow-hidden rounded-xl border border-zinc-800/80 bg-zinc-900/40 transition-colors hover:border-zinc-700"
+            >
+              <div
+                className={`relative flex h-24 items-center justify-center bg-gradient-to-br ${from} ${to}`}
+              >
+                <div className="absolute inset-0 bg-zinc-950/20" />
+                <Icon className="relative h-8 w-8 text-white/90" />
               </div>
-              {pos.winning ? (
-                <span className="rounded-full bg-cyan-500/10 px-3 py-1 text-xs font-medium text-cyan-400">
-                  In the winning zone
-                </span>
-              ) : (
-                <span className="rounded-full bg-rose-500/10 px-3 py-1 text-xs font-medium text-rose-500">
-                  Below cutoff
-                </span>
-              )}
-            </div>
+              <div className="p-4">
+                <p className="font-medium text-white">{name}</p>
+                <p className="mt-0.5 text-sm text-zinc-500">{count}</p>
+              </div>
+            </Link>
           ))}
+        </div>
+      </section>
+
+      {/* Escrow */}
+      <section>
+        <div className={`${CARD} p-6`}>
+          <div className="flex items-center gap-2 text-zinc-400">
+            <Wallet className="h-4 w-4" />
+            <span className="text-xs font-medium uppercase tracking-widest">Escrow Vault Balance</span>
+          </div>
+          <p className="mt-4 text-4xl font-semibold tracking-tight text-white">₹24,500</p>
+          <p className="mt-1 text-sm text-zinc-500">Held securely across your active pledges</p>
         </div>
       </section>
     </div>

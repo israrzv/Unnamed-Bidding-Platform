@@ -21,8 +21,7 @@ export function AuthWall({ initialError }: { initialError?: string }) {
   async function signInWithGoogle() {
     setError(null);
     setLoading(true);
-    const supabase = createClient();
-    const { error } = await supabase.auth.signInWithOAuth({
+    const { error } = await createClient().auth.signInWithOAuth({
       provider: "google",
       options: { redirectTo: `${window.location.origin}/auth/callback` },
     });
@@ -30,7 +29,6 @@ export function AuthWall({ initialError }: { initialError?: string }) {
       setLoading(false);
       setError(error.message);
     }
-    // On success the browser redirects to Google.
   }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -53,7 +51,6 @@ export function AuthWall({ initialError }: { initialError?: string }) {
       return;
     }
 
-    // signup
     const username = String(form.get("username"));
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -69,21 +66,18 @@ export function AuthWall({ initialError }: { initialError?: string }) {
       router.push("/");
       router.refresh();
     } else {
-      setNotice("Check your email to confirm your account, then log in.");
+      setNotice("Check your email to confirm your account, then sign in.");
     }
   }
 
   return (
     <div className="w-full max-w-sm rounded-2xl border border-zinc-800/80 bg-zinc-900/40 p-8 backdrop-blur-md">
       <div className="text-center">
-        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-violet-600 text-lg font-bold text-white">
-          B
-        </div>
-        <h1 className="mt-4 text-xl font-bold text-white">
-          {mode === "login" ? "Enter the Arena" : "Create your account"}
+        <h1 className="text-2xl font-semibold tracking-tight text-white">
+          {mode === "login" ? "Welcome back" : "Create your account"}
         </h1>
         <p className="mt-1 text-sm text-zinc-400">
-          {mode === "login" ? "Log in to manage your bids." : "Sign up to start bidding."}
+          {mode === "login" ? "Sign in to manage your pledges." : "Sign up to enter the arena."}
         </p>
       </div>
 
@@ -91,9 +85,9 @@ export function AuthWall({ initialError }: { initialError?: string }) {
         type="button"
         onClick={signInWithGoogle}
         disabled={loading}
-        className="mt-6 flex w-full items-center justify-center gap-3 rounded-lg border border-zinc-800/80 bg-zinc-950/60 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-zinc-900 disabled:opacity-60"
+        className="mt-6 flex w-full items-center justify-center gap-3 rounded-lg border border-zinc-800 bg-zinc-950/60 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-zinc-900 disabled:opacity-60"
       >
-        <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
+        <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
           <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.76h3.56c2.08-1.92 3.28-4.74 3.28-8.09Z" />
           <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.56-2.76c-.98.66-2.24 1.06-3.72 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23Z" />
           <path fill="#FBBC05" d="M5.84 14.11a6.6 6.6 0 0 1 0-4.22V7.05H2.18a11 11 0 0 0 0 9.9l3.66-2.84Z" />
@@ -121,19 +115,19 @@ export function AuthWall({ initialError }: { initialError?: string }) {
           minLength={mode === "signup" ? 8 : undefined}
         />
 
-        {error && <p className="text-sm text-rose-500">{error}</p>}
-        {notice && <p className="text-sm text-cyan-400">{notice}</p>}
+        {error && <p className="text-sm text-rose-400">{error}</p>}
+        {notice && <p className="text-sm text-emerald-400">{notice}</p>}
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-lg bg-violet-600 px-4 py-3 text-sm font-semibold text-white shadow-[0_0_15px_rgba(124,58,237,0.2)] transition-all duration-300 hover:bg-violet-700 hover:shadow-[0_0_25px_rgba(124,58,237,0.5)] disabled:opacity-50 disabled:shadow-none"
+          className="w-full rounded-lg bg-zinc-100 px-4 py-2.5 text-sm font-semibold text-zinc-900 transition-colors hover:bg-white disabled:opacity-40"
         >
-          {loading ? "Please wait…" : mode === "login" ? "Log in" : "Sign up"}
+          {loading ? "Please wait…" : mode === "login" ? "Sign in" : "Create account"}
         </button>
       </form>
 
-      <p className="mt-5 text-center text-sm text-zinc-500">
+      <p className="mt-5 text-center text-sm text-zinc-400">
         {mode === "login" ? "New to BidFair?" : "Already have an account?"}{" "}
         <button
           type="button"
@@ -142,9 +136,9 @@ export function AuthWall({ initialError }: { initialError?: string }) {
             setError(null);
             setNotice(null);
           }}
-          className="font-medium text-violet-400 hover:underline"
+          className="font-medium text-zinc-100 hover:underline"
         >
-          {mode === "login" ? "Create an account" : "Log in"}
+          {mode === "login" ? "Create one" : "Sign in"}
         </button>
       </p>
     </div>
@@ -157,7 +151,7 @@ function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
       {...props}
       required
       suppressHydrationWarning
-      className="w-full rounded-lg border border-zinc-800/80 bg-zinc-950/60 px-3 py-2.5 text-white placeholder:text-zinc-600 outline-none focus:border-violet-500/60"
+      className="w-full rounded-lg border border-zinc-800 bg-zinc-950/60 px-3 py-2.5 text-white placeholder:text-zinc-600 outline-none focus:border-zinc-600"
     />
   );
 }

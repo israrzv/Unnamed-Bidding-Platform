@@ -12,8 +12,8 @@ export async function Navbar() {
   const initials = user ? initialsFrom(user.username || user.email || "user") : null;
 
   return (
-    <header className="sticky top-0 z-40 border-b border-zinc-800/80 bg-zinc-950/70 backdrop-blur-md">
-      <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
+    <header className="sticky top-0 z-40 border-b border-zinc-800/80 bg-zinc-950/80 backdrop-blur-md">
+      <nav className="flex items-center justify-between px-6 py-4 sm:px-10">
         <NavMenu initials={initials} />
       </nav>
       <MobileNavLinks />

@@ -4,13 +4,8 @@ const config: Config = {
   content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
   theme: {
     extend: {
-      colors: {
-        // Kept for the preserved data-wired pages; aligned to the violet accent.
-        brand: {
-          DEFAULT: "#7c3aed",
-          dark: "#6d28d9",
-          light: "#a78bfa",
-        },
+      fontFamily: {
+        sans: ["var(--font-sans)", "system-ui", "sans-serif"],
       },
       keyframes: {
         marquee: {
@@ -19,7 +14,7 @@ const config: Config = {
         },
       },
       animation: {
-        marquee: "marquee 30s linear infinite",
+        marquee: "marquee 45s linear infinite",
       },
     },
   },
