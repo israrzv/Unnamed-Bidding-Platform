@@ -3,6 +3,8 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { LiveTicker } from "@/components/LiveTicker";
 import { Navbar } from "@/components/NavBar";
+import { SpotlightBackground } from "@/components/SpotlightBackground";
+import { IntroSplash } from "@/components/IntroSplash";
 
 const sans = Inter({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
 
@@ -18,8 +20,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={sans.variable}>
+    <html lang="en" className={`dark ${sans.variable}`}>
       <body className="bg-zinc-950 text-zinc-100">
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{if(sessionStorage.getItem('bidfair:intro-seen')){document.documentElement.classList.add('intro-seen')}}catch(e){}",
+          }}
+        />
+        <IntroSplash />
+        <SpotlightBackground />
         <LiveTicker />
         <Navbar />
         <main className="mx-auto max-w-5xl px-5 py-10 sm:px-6">{children}</main>

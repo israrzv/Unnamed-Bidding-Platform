@@ -2,6 +2,14 @@
 
 import { useState } from "react";
 import { User, Wallet, Ticket } from "lucide-react";
+import {
+  AnimatedCard,
+  CardBody,
+  CardDescription,
+  CardTitle,
+  CardVisual,
+  Visual3,
+} from "@/components/ui/animated-card-chart";
 
 const CARD = "rounded-xl border border-zinc-800/80 bg-zinc-900/40 backdrop-blur-md";
 
@@ -70,11 +78,23 @@ export function ProfileTabs({
 
         {tab === "wallet" && (
           <div className="space-y-4">
-            <div className={`${CARD} p-6`}>
-              <p className="text-xs font-medium uppercase tracking-widest text-zinc-500">
-                Escrow balance
-              </p>
-              <p className="mt-3 text-4xl font-semibold tracking-tight text-white">₹24,500</p>
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-stretch">
+              <div className={`${CARD} flex-1 p-6`}>
+                <p className="text-xs font-medium uppercase tracking-widest text-zinc-500">
+                  Escrow balance
+                </p>
+                <p className="mt-3 text-4xl font-semibold tracking-tight text-white">₹24,500</p>
+                <p className="mt-1 text-sm text-zinc-500">Held across your active pledges</p>
+              </div>
+              <AnimatedCard className="w-full sm:w-[356px]">
+                <CardVisual>
+                  <Visual3 mainColor="#10b981" secondaryColor="#22d3ee" />
+                </CardVisual>
+                <CardBody>
+                  <CardTitle>Saved from scalpers</CardTitle>
+                  <CardDescription>What you kept by paying the fair clearing price.</CardDescription>
+                </CardBody>
+              </AnimatedCard>
             </div>
             <div className={`${CARD} p-6`}>
               <p className="text-xs font-medium uppercase tracking-widest text-zinc-500">

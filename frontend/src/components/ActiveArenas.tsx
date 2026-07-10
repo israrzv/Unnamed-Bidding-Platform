@@ -6,6 +6,7 @@ import { ArrowRight } from "lucide-react";
 import { getParticipations } from "@/lib/pledges";
 import { getArena } from "@/lib/arenas";
 import { zoneFor, ZONE, type Zone } from "@/lib/zones";
+import { TiltCard } from "@/components/TiltCard";
 
 const CARD = "rounded-xl border border-zinc-800/80 bg-zinc-900/40 backdrop-blur-md";
 
@@ -43,23 +44,24 @@ export function ActiveArenas() {
       ) : (
         <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {rows.map((r) => (
-            <Link
-              key={r.id}
-              href={`/arena/${r.id}`}
-              className={`${CARD} group p-5 transition-colors hover:border-zinc-700`}
-            >
-              <div className="flex items-center justify-between">
-                <span className="flex items-center gap-2 text-xs text-zinc-400">
-                  <span className={`h-2 w-2 rounded-full ${ZONE[r.zone].dot}`} />
-                  {ZONE[r.zone].label}
-                </span>
-                <ArrowRight className="h-4 w-4 text-zinc-600 transition-colors group-hover:text-zinc-300" />
-              </div>
-              <h3 className="mt-3 font-medium text-white">{r.name}</h3>
-              <p className="mt-0.5 text-sm text-zinc-500">
-                Pledge ₹{r.pledge.toLocaleString("en-IN")}
-              </p>
-            </Link>
+            <TiltCard key={r.id}>
+              <Link
+                href={`/arena/${r.id}`}
+                className={`${CARD} group block p-5 transition-colors hover:border-zinc-700`}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="flex items-center gap-2 text-xs text-zinc-400">
+                    <span className={`h-2 w-2 rounded-full ${ZONE[r.zone].dot}`} />
+                    {ZONE[r.zone].label}
+                  </span>
+                  <ArrowRight className="h-4 w-4 text-zinc-600 transition-colors group-hover:text-zinc-300" />
+                </div>
+                <h3 className="mt-3 font-medium text-white">{r.name}</h3>
+                <p className="mt-0.5 text-sm text-zinc-500">
+                  Pledge ₹{r.pledge.toLocaleString("en-IN")}
+                </p>
+              </Link>
+            </TiltCard>
           ))}
         </div>
       )}

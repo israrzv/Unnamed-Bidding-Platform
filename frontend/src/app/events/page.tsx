@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, MapPin } from "lucide-react";
+import { TiltCard } from "@/components/TiltCard";
 
 const CARD = "rounded-xl border border-zinc-800/80 bg-zinc-900/40 backdrop-blur-md";
 const WEEKDAYS = ["S", "M", "T", "W", "T", "F", "S"];
@@ -140,24 +141,25 @@ export default function EventsPage() {
               <div className={`${CARD} p-6 text-sm text-zinc-500`}>No drops on this date.</div>
             ) : (
               catalog.map(({ drop, day }) => (
-                <Link
-                  key={drop.id}
-                  href={`/arena/${drop.id}`}
-                  className={`${CARD} group flex items-stretch overflow-hidden transition-colors hover:border-zinc-700`}
-                >
-                  <div className="flex w-24 shrink-0 items-center justify-center border-r border-zinc-800/80 bg-zinc-900/60 text-center">
-                    <div>
-                      <p className="text-lg font-semibold text-white">{day}</p>
-                      <p className="text-xs text-zinc-500">{MONTHS[view.month].slice(0, 3)}</p>
+                <TiltCard key={drop.id}>
+                  <Link
+                    href={`/arena/${drop.id}`}
+                    className={`${CARD} group flex items-stretch overflow-hidden transition-colors hover:border-zinc-700`}
+                  >
+                    <div className="flex w-24 shrink-0 items-center justify-center border-r border-zinc-800/80 bg-zinc-900/60 text-center">
+                      <div>
+                        <p className="text-lg font-semibold text-white">{day}</p>
+                        <p className="text-xs text-zinc-500">{MONTHS[view.month].slice(0, 3)}</p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex-1 p-4">
-                    <h3 className="font-medium text-white">{drop.title}</h3>
-                    <p className="mt-1 flex items-center gap-1 text-sm text-zinc-500">
-                      <MapPin className="h-3.5 w-3.5" /> {drop.venue}
-                    </p>
-                  </div>
-                </Link>
+                    <div className="flex-1 p-4">
+                      <h3 className="font-medium text-white">{drop.title}</h3>
+                      <p className="mt-1 flex items-center gap-1 text-sm text-zinc-500">
+                        <MapPin className="h-3.5 w-3.5" /> {drop.venue}
+                      </p>
+                    </div>
+                  </Link>
+                </TiltCard>
               ))
             )}
           </div>
