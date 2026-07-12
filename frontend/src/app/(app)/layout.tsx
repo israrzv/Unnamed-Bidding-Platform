@@ -9,7 +9,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <script
         dangerouslySetInnerHTML={{
           __html:
-            "try{if(sessionStorage.getItem('bidfair:entry-seen-v2')){document.documentElement.classList.add('entry-seen')}}catch(e){}",
+            "try{if(sessionStorage.getItem('bidfair:entry-seen-v3')){document.documentElement.classList.add('entry-seen')}}catch(e){}",
         }}
       />
       <EntrySplash />
