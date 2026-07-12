@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ParticleText } from "@/components/ParticleText";
+import { VaporizeText } from "@/components/ui/vaporize-text";
 
 type Phase = "guitar" | "morph" | "title" | "sand" | "done";
 
@@ -55,7 +55,7 @@ export function EntrySplash() {
 
       {/* Guitar */}
       <div
-        className={`absolute flex items-center justify-center transition-all duration-700 ease-out ${
+        className={`absolute inset-0 flex items-center justify-center transition-all duration-700 ease-out ${
           phase === "guitar"
             ? "scale-100 opacity-100"
             : "scale-50 opacity-0 blur-sm"
@@ -71,7 +71,7 @@ export function EntrySplash() {
 
       {/* Glowing orb */}
       <div
-        className={`absolute flex items-center justify-center transition-all duration-500 ease-out ${
+        className={`absolute inset-0 flex items-center justify-center transition-all duration-500 ease-out ${
           phase === "morph"
             ? "scale-100 opacity-100"
             : phase === "guitar"
@@ -82,10 +82,10 @@ export function EntrySplash() {
         <div className="h-28 w-28 rounded-full bg-gradient-to-br from-emerald-300 via-cyan-400 to-blue-500 shadow-[0_0_80px_rgba(52,211,153,0.6)]" />
       </div>
 
-      {/* BidFair title slides in (hidden once the sand takes over) */}
+      {/* BidFair title slides in (hidden once the vapor takes over) */}
       {phase !== "sand" && (
         <div
-          className={`absolute flex items-center justify-center transition-all duration-[600ms] ease-out ${
+          className={`absolute inset-0 flex items-center justify-center transition-all duration-[600ms] ease-out ${
             phase === "title"
               ? "translate-x-0 opacity-100"
               : "translate-x-[80vw] opacity-0"
@@ -97,9 +97,15 @@ export function EntrySplash() {
         </div>
       )}
 
-      {/* Sand disintegration (canvas draws "BidFair" then blows it away) */}
+      {/* Fine-particle vaporize: "BidFair" dissolves into tiny granules */}
       {phase === "sand" && (
-        <ParticleText text="BidFair" onComplete={() => setPhase("done")} />
+        <VaporizeText
+          segments={[
+            { text: "Bid", color: "#ffffff" },
+            { text: "Fair", color: "#34d399" },
+          ]}
+          onComplete={() => setPhase("done")}
+        />
       )}
     </div>
   );
