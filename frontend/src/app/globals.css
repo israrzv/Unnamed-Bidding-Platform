@@ -15,8 +15,8 @@ body {
   scrollbar-color: #3f3f46 transparent;
 }
 
-/* Set synchronously by an inline script for sessions that already saw the intro
-   — hides the splash before first paint so reloads never flash it. */
-.intro-seen #intro-splash {
+/* Set synchronously by an inline script for sessions that already saw the entry
+   splash — hides it before first paint so reloads never flash it. */
+.entry-seen #entry-splash {
   display: none !important;
 }

@@ -30,6 +30,24 @@ const config: Config = {
           "30%": { opacity: "1" },
           "100%": { opacity: "0", transform: "translate(14px,-46px) scale(1)" },
         },
+        "blob-a": {
+          "0%,100%": { transform: "translate(0,0) scale(1)" },
+          "33%": { transform: "translate(6%,-8%) scale(1.18)" },
+          "66%": { transform: "translate(-7%,6%) scale(0.88)" },
+        },
+        "blob-b": {
+          "0%,100%": { transform: "translate(0,0) scale(1)" },
+          "33%": { transform: "translate(-8%,7%) scale(0.9)" },
+          "66%": { transform: "translate(9%,-6%) scale(1.2)" },
+        },
+        "blob-c": {
+          "0%,100%": { transform: "translate(0,0) scale(1.05)" },
+          "50%": { transform: "translate(5%,9%) scale(0.85)" },
+        },
+        hue: {
+          "0%": { filter: "hue-rotate(0deg)" },
+          "100%": { filter: "hue-rotate(360deg)" },
+        },
       },
       animation: {
         marquee: "marquee 45s linear infinite",
@@ -37,6 +55,11 @@ const config: Config = {
         bob: "bob 0.6s ease-in-out infinite",
         strum: "strum 0.26s ease-in-out infinite",
         "note-float": "note-float 1.1s ease-out infinite",
+        "blob-a": "blob-a 34s ease-in-out infinite",
+        "blob-b": "blob-b 42s ease-in-out infinite",
+        "blob-c": "blob-c 30s ease-in-out infinite",
+        hue: "hue 7s linear infinite",
+        "hue-slow": "hue 16s linear infinite",
       },
     },
   },

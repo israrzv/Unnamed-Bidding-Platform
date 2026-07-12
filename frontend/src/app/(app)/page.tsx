@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Music2, Disc3, Tent, Mic2, Trophy, Drama } from "lucide-react";
 import { ActiveArenas } from "@/components/ActiveArenas";
 import { TiltCard } from "@/components/TiltCard";
 import {
@@ -12,12 +11,12 @@ import {
 } from "@/components/ui/animated-card-chart";
 
 const CATEGORIES = [
-  { name: "Concerts", count: "4 live", Icon: Music2, from: "from-violet-600/40", to: "to-fuchsia-600/20" },
-  { name: "Club Nights", count: "2 live", Icon: Disc3, from: "from-cyan-500/40", to: "to-blue-600/20" },
-  { name: "Festivals", count: "1 upcoming", Icon: Tent, from: "from-emerald-500/40", to: "to-teal-600/20" },
-  { name: "Comedy", count: "3 upcoming", Icon: Mic2, from: "from-amber-500/40", to: "to-orange-600/20" },
-  { name: "Sports", count: "1 live", Icon: Trophy, from: "from-rose-500/40", to: "to-red-600/20" },
-  { name: "Theatre", count: "2 upcoming", Icon: Drama, from: "from-indigo-500/40", to: "to-purple-600/20" },
+  { name: "Concerts", count: "4 live", img: "/categories/concerts.jpg" },
+  { name: "Club Nights", count: "2 live", img: "/categories/clubnights.jpg" },
+  { name: "Festivals", count: "1 upcoming", img: "/categories/festivals.jpg" },
+  { name: "Comedy", count: "3 upcoming", img: "/categories/comedy.jpg" },
+  { name: "Sports", count: "1 live", img: "/categories/sports.jpg" },
+  { name: "Theatre", count: "2 upcoming", img: "/categories/theatre.jpg" },
 ];
 
 export default function HomePage() {
@@ -76,19 +75,29 @@ export default function HomePage() {
           Browse by category
         </h2>
         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
-          {CATEGORIES.map(({ name, count, Icon, from, to }) => (
+          {CATEGORIES.map(({ name, count, img }) => (
             <TiltCard key={name}>
               <Link
                 href="/events"
                 className="group block overflow-hidden rounded-xl border border-zinc-800/80 bg-zinc-900/40 transition-colors hover:border-zinc-700"
               >
-                <div className={`relative flex h-24 items-center justify-center bg-gradient-to-br ${from} ${to}`}>
-                  <div className="absolute inset-0 bg-zinc-950/20" />
-                  <Icon className="relative h-8 w-8 text-white/90" />
+                <div className="relative h-28 w-full overflow-hidden">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={img}
+                    alt={name}
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent" />
+                  <p className="absolute bottom-2 left-3 text-lg font-semibold text-white drop-shadow">
+                    {name}
+                  </p>
                 </div>
-                <div className="p-4">
-                  <p className="font-medium text-white">{name}</p>
-                  <p className="mt-0.5 text-sm text-zinc-500">{count}</p>
+                <div className="flex items-center justify-between px-4 py-3">
+                  <span className="text-sm text-zinc-400">{count}</span>
+                  <span className="text-xs text-zinc-500 transition-colors group-hover:text-zinc-300">
+                    Browse →
+                  </span>
                 </div>
               </Link>
             </TiltCard>

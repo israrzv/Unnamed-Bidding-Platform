@@ -31,9 +31,21 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
-  // Refreshes the session if expired. Do not run other logic between here and
-  // returning the response, per Supabase SSR guidance.
-  await supabase.auth.getUser();
+  // Refreshes the session if expired.
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  // Gate the app behind the login screen: unauthenticated, non-guest visitors
+  // are sent to /login first. /login and the auth callback stay public.
+  const path = request.nextUrl.pathname;
+  const isPublic = path.startsWith("/login") || path.startsWith("/auth");
+  const isGuest = request.cookies.get("bidfair-guest")?.value === "1";
+  if (!user && !isGuest && !isPublic) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/login";
+    return NextResponse.redirect(url);
+  }
 
   return response;
 }

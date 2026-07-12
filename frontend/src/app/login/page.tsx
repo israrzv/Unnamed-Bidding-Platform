@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
-import { AuthWall } from "@/components/AuthWall";
+import { LoginExperience } from "@/components/LoginExperience";
 
 export default async function LoginPage({
   searchParams,
@@ -12,9 +12,5 @@ export default async function LoginPage({
 
   const { error } = await searchParams;
 
-  return (
-    <div className="flex min-h-[70vh] items-center justify-center px-2">
-      <AuthWall initialError={error} />
-    </div>
-  );
+  return <LoginExperience initialError={error} />;
 }
