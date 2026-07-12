@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
-import { LoginExperience } from "@/components/LoginExperience";
+import { SignInForm } from "@/components/SignInForm";
 
-export default async function LoginPage({
+export default async function SignInPage({
   searchParams,
 }: {
   searchParams: Promise<{ error?: string }>;
@@ -12,5 +12,5 @@ export default async function LoginPage({
 
   const { error } = await searchParams;
 
-  return <LoginExperience initialError={error} />;
+  return <SignInForm initialError={error} />;
 }

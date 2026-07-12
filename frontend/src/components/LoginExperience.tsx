@@ -14,7 +14,7 @@ const AUTH_ERRORS: Record<string, string> = {
 
 export function LoginExperience({ initialError }: { initialError?: string }) {
   const router = useRouter();
-  const [mode, setMode] = useState<"login" | "signup">("login");
+  const [mode, setMode] = useState<"login" | "signup">("signup");
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(
     initialError ? AUTH_ERRORS[initialError] ?? "Something went wrong." : null

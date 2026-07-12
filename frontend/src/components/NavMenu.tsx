@@ -51,7 +51,7 @@ export function NavMenu({ initials }: { initials: string | null }) {
         </div>
       ) : (
         <Link
-          href="/login"
+          href="/signin"
           className="rounded-full bg-zinc-100 px-4 py-1.5 text-sm font-semibold text-zinc-900 transition-colors hover:bg-white"
         >
           Sign in

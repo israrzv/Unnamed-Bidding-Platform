@@ -39,7 +39,10 @@ export async function updateSession(request: NextRequest) {
   // Gate the app behind the login screen: unauthenticated, non-guest visitors
   // are sent to /login first. /login and the auth callback stay public.
   const path = request.nextUrl.pathname;
-  const isPublic = path.startsWith("/login") || path.startsWith("/auth");
+  const isPublic =
+    path.startsWith("/login") ||
+    path.startsWith("/signin") ||
+    path.startsWith("/auth");
   const isGuest = request.cookies.get("bidfair-guest")?.value === "1";
   if (!user && !isGuest && !isPublic) {
     const url = request.nextUrl.clone();
