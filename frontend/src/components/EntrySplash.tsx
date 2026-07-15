@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { VaporizeText } from "@/components/ui/vaporize-text";
 
-type Phase = "vapor" | "done";
+type Phase = "vapor" | "reveal" | "done";
 
 /** Module guard so the splash schedules exactly once per load. */
 let entryHasRun = false;
@@ -38,14 +38,20 @@ export function EntrySplash() {
   return (
     <div
       id="entry-splash"
-      className="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden bg-zinc-950"
+      className={`fixed inset-0 z-[100] flex items-center justify-center overflow-hidden bg-zinc-950 transition-all duration-700 ease-in-out ${
+        phase === "reveal" ? "-translate-x-full opacity-0" : "translate-x-0 opacity-100"
+      }`}
     >
       <VaporizeText
         segments={[
           { text: "Bid", color: "#ffffff" },
           { text: "Fair", color: "#34d399" },
         ]}
-        onComplete={() => setPhase("done")}
+        onComplete={() => {
+          // Slide the splash off to the left, revealing the app underneath.
+          setPhase("reveal");
+          setTimeout(() => setPhase("done"), 700);
+        }}
       />
     </div>
   );

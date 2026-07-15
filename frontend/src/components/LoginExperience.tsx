@@ -21,8 +21,16 @@ export function LoginExperience({ initialError }: { initialError?: string }) {
   );
   const [notice, setNotice] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [exiting, setExiting] = useState(false);
 
   const showRest = email.trim().length > 0;
+
+  // Slide the whole page out to the left, then navigate — smooth hand-off to
+  // the intro splash / app instead of a hard cut.
+  function leave(go: () => void) {
+    setExiting(true);
+    setTimeout(go, 450);
+  }
 
   async function signInWithGoogle() {
     setError(null);
@@ -36,7 +44,7 @@ export function LoginExperience({ initialError }: { initialError?: string }) {
 
   function enterAsGuest() {
     document.cookie = `bidfair-guest=1; path=/; max-age=${60 * 60 * 24 * 7}`;
-    router.push("/");
+    leave(() => router.push("/"));
   }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -53,8 +61,10 @@ export function LoginExperience({ initialError }: { initialError?: string }) {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       setLoading(false);
       if (error) return setError(error.message);
-      router.push("/");
-      router.refresh();
+      leave(() => {
+        router.push("/");
+        router.refresh();
+      });
       return;
     }
 
@@ -70,15 +80,21 @@ export function LoginExperience({ initialError }: { initialError?: string }) {
     setLoading(false);
     if (error) return setError(error.message);
     if (data.session) {
-      router.push("/");
-      router.refresh();
+      leave(() => {
+        router.push("/");
+        router.refresh();
+      });
     } else {
       setNotice("Check your email to confirm your account, then sign in.");
     }
   }
 
   return (
-    <>
+    <div
+      className={`transition-all duration-500 ease-in-out ${
+        exiting ? "-translate-x-full opacity-0" : "translate-x-0 opacity-100"
+      }`}
+    >
       {mode === "login" ? <StripesBackground /> : <RainbowBackground />}
 
       <div className="flex min-h-screen flex-col items-center justify-center px-4 py-10">
@@ -184,6 +200,6 @@ export function LoginExperience({ initialError }: { initialError?: string }) {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
