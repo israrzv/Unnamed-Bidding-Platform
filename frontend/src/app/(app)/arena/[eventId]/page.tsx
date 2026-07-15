@@ -4,14 +4,13 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ArrowLeft, ShieldCheck, Info } from "lucide-react";
-import { type Zone, zoneFor, nextZoneHint, ZONE, ZONE_BG } from "@/lib/zones";
+import { type Zone, zoneFor, nextZoneHint, ZONE } from "@/lib/zones";
 import { getArena } from "@/lib/arenas";
 import { getPledges, addPledge } from "@/lib/pledges";
 import { setParticleAccent, type RGB } from "@/components/ui/particle-field";
 
 const MAX_PLEDGES = 3;
 const TOP_PLEDGES = [2000, 1850, 1700];
-const ZONE_ORDER: Zone[] = ["blue", "green", "yellow", "red"];
 
 // Particle-field accent per zone (matches each zone's signature colour).
 const ZONE_RGB: Record<Zone, RGB> = {
@@ -56,17 +55,6 @@ export default function ArenaPage() {
 
   return (
     <div className="relative">
-      {/* Full-screen zone backdrop — sits behind the particle field (-z-20),
-          crossfades between zones, transparent when none. */}
-      {ZONE_ORDER.map((z) => (
-        <div
-          key={z}
-          className={`fixed inset-0 -z-20 transition-opacity duration-700 ease-out ${ZONE_BG[z]} ${
-            zone === z ? "opacity-100" : "opacity-0"
-          }`}
-        />
-      ))}
-
       <Link
         href="/arena"
         className="inline-flex items-center gap-1.5 text-sm text-zinc-400 transition-colors hover:text-white"
