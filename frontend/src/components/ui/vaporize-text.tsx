@@ -21,9 +21,9 @@ type P = {
 };
 
 /**
- * One-shot vaporize: draws `segments` (multi-colour text) crisply, holds, then
- * dissolves it left-to-right into very fine particles that drift and fade.
- * Calls `onComplete` once every particle is gone.
+ * One-shot vaporize: draws `segments` (multi-colour text) crisply and centered,
+ * holds, then dissolves it left-to-right into very fine particles that drift and
+ * fade. Calls `onComplete` once every particle is gone.
  */
 export function VaporizeText({
   segments,
@@ -41,16 +41,22 @@ export function VaporizeText({
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext("2d")!;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
 
-    const w = (canvas.width = window.innerWidth);
-    const h = (canvas.height = window.innerHeight);
+    // Size the backing store to the canvas's ACTUAL displayed size × DPR so the
+    // drawing coordinate space matches what's on screen — keeps text centered.
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const rect = canvas.getBoundingClientRect();
+    const cssW = rect.width || window.innerWidth;
+    const cssH = rect.height || window.innerHeight;
+    const w = (canvas.width = Math.floor(cssW * dpr));
+    const h = (canvas.height = Math.floor(cssH * dpr));
     const cy = h / 2;
 
-    const fontSize = Math.min(150, Math.max(56, w * 0.11));
+    const fontSize = Math.min(150, Math.max(56, cssW * 0.11)) * dpr;
     const font = `800 ${fontSize}px Inter, system-ui, sans-serif`;
 
-    // Layout: measure each segment, center the whole word.
     ctx.font = font;
     ctx.textBaseline = "middle";
     ctx.textAlign = "left";
@@ -75,7 +81,7 @@ export function VaporizeText({
     drawText();
     const data = ctx.getImageData(0, 0, w, h).data;
 
-    const gap = 1; // finest sampling → smooth, tiny granules
+    const gap = Math.max(1, Math.round(dpr)); // ~1 CSS px granules
     const particles: P[] = [];
     for (let y = 0; y < h; y += gap) {
       for (let x = 0; x < w; x += gap) {
@@ -104,8 +110,8 @@ export function VaporizeText({
 
     const left = startX;
     const width = total;
-    const SPREAD = Math.max(0.6, fontSize / 90); // velocity scale
-    const density = 0.7; // fraction that drift (rest fade fast)
+    const SPREAD = Math.max(0.6, fontSize / 90);
+    const density = 0.7;
 
     const start = performance.now();
     let last = start;
@@ -116,7 +122,7 @@ export function VaporizeText({
       const t = (now - start) / 1000;
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
-      ctx.clearRect(0, 0, w, h);
+      ctx!.clearRect(0, 0, w, h);
 
       if (t < hold) {
         drawText();
@@ -134,7 +140,7 @@ export function VaporizeText({
             const angle = Math.random() * Math.PI * 2;
             p.speed = (Math.random() * 1 + 0.5) * SPREAD;
             p.vx = Math.cos(angle) * p.speed;
-            p.vy = Math.sin(angle) * p.speed * 0.7 - 0.4; // slight upward drift
+            p.vy = Math.sin(angle) * p.speed * 0.7 - 0.4;
             p.fadeFast = Math.random() > density;
           }
           if (p.fadeFast) {
@@ -148,13 +154,13 @@ export function VaporizeText({
             p.a = Math.max(0, p.a - dt * 0.55);
           }
           if (p.a > 0.01) {
-            ctx.fillStyle = `rgba(${p.r},${p.g},${p.b},${p.a})`;
-            ctx.fillRect(p.x, p.y, gap, gap);
+            ctx!.fillStyle = `rgba(${p.r},${p.g},${p.b},${p.a})`;
+            ctx!.fillRect(p.x, p.y, gap, gap);
             alive++;
           }
         } else {
-          ctx.fillStyle = `rgba(${p.r},${p.g},${p.b},${p.a})`;
-          ctx.fillRect(p.x, p.y, gap, gap);
+          ctx!.fillStyle = `rgba(${p.r},${p.g},${p.b},${p.a})`;
+          ctx!.fillRect(p.x, p.y, gap, gap);
           alive++;
         }
       }
