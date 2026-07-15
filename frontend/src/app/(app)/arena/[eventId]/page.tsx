@@ -7,10 +7,19 @@ import { ArrowLeft, ShieldCheck, Info } from "lucide-react";
 import { type Zone, zoneFor, nextZoneHint, ZONE, ZONE_BG } from "@/lib/zones";
 import { getArena } from "@/lib/arenas";
 import { getPledges, addPledge } from "@/lib/pledges";
+import { setParticleAccent, type RGB } from "@/components/ui/particle-field";
 
 const MAX_PLEDGES = 3;
 const TOP_PLEDGES = [2000, 1850, 1700];
 const ZONE_ORDER: Zone[] = ["blue", "green", "yellow", "red"];
+
+// Particle-field accent per zone (matches each zone's signature colour).
+const ZONE_RGB: Record<Zone, RGB> = {
+  blue: { r: 34, g: 211, b: 238 }, // cyan-400
+  green: { r: 52, g: 211, b: 153 }, // emerald-400
+  yellow: { r: 251, g: 191, b: 36 }, // amber-400
+  red: { r: 251, g: 113, b: 133 }, // rose-400
+};
 
 export default function ArenaPage() {
   const params = useParams<{ eventId: string }>();
@@ -29,6 +38,12 @@ export default function ArenaPage() {
 
   const current = pledges.length ? pledges[pledges.length - 1] : null;
   const zone: Zone | null = current !== null ? zoneFor(current) : null;
+
+  // Retint the shared particle background to the active zone; reset on leave.
+  useEffect(() => {
+    setParticleAccent(zone ? ZONE_RGB[zone] : null);
+    return () => setParticleAccent(null);
+  }, [zone]);
   const bidsLeft = MAX_PLEDGES - pledges.length;
   const minAllowed = current !== null ? current + 1 : 1;
   const tooLow = entry < minAllowed;
@@ -41,11 +56,12 @@ export default function ArenaPage() {
 
   return (
     <div className="relative">
-      {/* Full-screen zone backdrop — crossfades between zones, black when none. */}
+      {/* Full-screen zone backdrop — sits behind the particle field (-z-20),
+          crossfades between zones, transparent when none. */}
       {ZONE_ORDER.map((z) => (
         <div
           key={z}
-          className={`fixed inset-0 -z-10 transition-opacity duration-700 ease-out ${ZONE_BG[z]} ${
+          className={`fixed inset-0 -z-20 transition-opacity duration-700 ease-out ${ZONE_BG[z]} ${
             zone === z ? "opacity-100" : "opacity-0"
           }`}
         />

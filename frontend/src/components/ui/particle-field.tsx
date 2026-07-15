@@ -2,10 +2,23 @@
 
 import { useEffect, useRef } from "react";
 
+export type RGB = { r: number; g: number; b: number };
+
+const DEFAULT_ACCENT: RGB = { r: 52, g: 211, b: 153 }; // emerald-400
+
+/** Module-level accent so any page can retint the shared background without
+ *  remounting the canvas (e.g. the arena colours it by active zone). */
+let accent: RGB = { ...DEFAULT_ACCENT };
+
+export function setParticleAccent(rgb: RGB | null) {
+  accent = rgb ?? { ...DEFAULT_ACCENT };
+}
+
 /**
  * App-wide interactive background: a slow drifting field of particles linked by
  * thin lines. The cursor pushes nearby particles away and brightens the links
- * around it. Rendered fixed behind all content.
+ * around it. The canvas is transparent so whatever sits behind it (page
+ * background / zone gradient) shows through. Colour is driven by `accent`.
  */
 export function ParticleField() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -35,7 +48,7 @@ export function ParticleField() {
       draw() {
         ctx!.beginPath();
         ctx!.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
-        ctx!.fillStyle = "rgba(52, 211, 153, 0.6)";
+        ctx!.fillStyle = `rgba(${accent.r}, ${accent.g}, ${accent.b}, 0.6)`;
         ctx!.fill();
       }
       update() {
@@ -92,8 +105,8 @@ export function ParticleField() {
               nearMouse = Math.sqrt(mdx * mdx + mdy * mdy) < mouse.radius;
             }
             ctx!.strokeStyle = nearMouse
-              ? `rgba(224, 242, 254, ${opacity})`
-              : `rgba(45, 212, 191, ${opacity * 0.5})`;
+              ? `rgba(255, 255, 255, ${opacity})`
+              : `rgba(${accent.r}, ${accent.g}, ${accent.b}, ${opacity * 0.5})`;
             ctx!.lineWidth = 1;
             ctx!.beginPath();
             ctx!.moveTo(particles[a].x, particles[a].y);
@@ -106,8 +119,7 @@ export function ParticleField() {
 
     function animate() {
       raf = requestAnimationFrame(animate);
-      ctx!.fillStyle = "#09090b"; // zinc-950 to match the app
-      ctx!.fillRect(0, 0, canvas!.width, canvas!.height);
+      ctx!.clearRect(0, 0, canvas!.width, canvas!.height); // transparent — reveals bg behind
       for (const p of particles) p.update();
       connect();
     }
