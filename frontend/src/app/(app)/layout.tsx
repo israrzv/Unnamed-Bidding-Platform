@@ -1,6 +1,6 @@
 import { LiveTicker } from "@/components/LiveTicker";
 import { Navbar } from "@/components/NavBar";
-import { SpotlightBackground } from "@/components/SpotlightBackground";
+import { ParticleField } from "@/components/ui/particle-field";
 import { EntrySplash } from "@/components/EntrySplash";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
@@ -13,7 +13,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         }}
       />
       <EntrySplash />
-      <SpotlightBackground />
+      <ParticleField />
       <LiveTicker />
       <Navbar />
       <main className="mx-auto max-w-5xl px-5 py-10 sm:px-6">{children}</main>

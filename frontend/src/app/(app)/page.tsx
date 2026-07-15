@@ -25,10 +25,7 @@ export default function HomePage() {
       {/* Hero with animated chart */}
       <section className="grid items-center gap-10 lg:grid-cols-2">
         <div>
-          <span className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-400">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> Anti-scalper pricing
-          </span>
-          <h1 className="mt-4 text-3xl font-semibold leading-tight tracking-tight text-white sm:text-4xl">
+          <h1 className="text-3xl font-semibold leading-tight tracking-tight text-white sm:text-4xl">
             Scalpers pocket the markup. <br className="hidden sm:block" />
             BidFair hands it back to you.
           </h1>
