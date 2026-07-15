@@ -13,7 +13,6 @@ type P = {
   g: number;
   b: number;
   a: number;
-  oa: number;
   vx: number;
   vy: number;
   speed: number;
@@ -21,9 +20,9 @@ type P = {
 };
 
 /**
- * One-shot vaporize: draws `segments` (multi-colour text) crisply and centered,
- * holds, then dissolves it left-to-right into very fine particles that drift and
- * fade. Calls `onComplete` once every particle is gone.
+ * One-shot vaporize: draws `segments` (multi-colour text) crisply and centered
+ * in the canvas's own box, holds, then dissolves it left-to-right into fine
+ * particles that drift and fade. Calls `onComplete` once every particle is gone.
  */
 export function VaporizeText({
   segments,
@@ -37,6 +36,8 @@ export function VaporizeText({
   vaporDuration?: number;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -44,17 +45,20 @@ export function VaporizeText({
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    // Size the backing store to the canvas's ACTUAL displayed size × DPR so the
-    // drawing coordinate space matches what's on screen — keeps text centered.
+    // Pin BOTH the display size and the backing store to the viewport, scaled
+    // by DPR. Setting style + attribute explicitly (not relying on CSS h-full)
+    // guarantees a 1:1, undistorted, centred canvas.
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const rect = canvas.getBoundingClientRect();
-    const cssW = rect.width || window.innerWidth;
-    const cssH = rect.height || window.innerHeight;
-    const w = (canvas.width = Math.floor(cssW * dpr));
-    const h = (canvas.height = Math.floor(cssH * dpr));
+    const cssW = window.innerWidth;
+    const cssH = window.innerHeight;
+    canvas.style.width = `${cssW}px`;
+    canvas.style.height = `${cssH}px`;
+    const w = (canvas.width = Math.round(cssW * dpr));
+    const h = (canvas.height = Math.round(cssH * dpr));
+    const cx = w / 2;
     const cy = h / 2;
 
-    const fontSize = Math.min(150, Math.max(56, cssW * 0.11)) * dpr;
+    const fontSize = Math.min(140, Math.max(52, cssW * 0.1)) * dpr;
     const font = `800 ${fontSize}px Inter, system-ui, sans-serif`;
 
     ctx.font = font;
@@ -62,7 +66,7 @@ export function VaporizeText({
     ctx.textAlign = "left";
     const widths = segments.map((s) => ctx.measureText(s.text).width);
     const total = widths.reduce((a, b) => a + b, 0);
-    const startX = (w - total) / 2;
+    const startX = cx - total / 2;
 
     const drawText = () => {
       ctx.font = font;
@@ -76,19 +80,17 @@ export function VaporizeText({
       });
     };
 
-    // Sample the rendered word into fine particles.
     ctx.clearRect(0, 0, w, h);
     drawText();
     const data = ctx.getImageData(0, 0, w, h).data;
 
-    const gap = Math.max(1, Math.round(dpr)); // ~1 CSS px granules
+    const gap = Math.max(1, Math.round(dpr));
     const particles: P[] = [];
     for (let y = 0; y < h; y += gap) {
       for (let x = 0; x < w; x += gap) {
         const idx = (y * w + x) * 4;
         const alpha = data[idx + 3];
         if (alpha > 40) {
-          const a = alpha / 255;
           particles.push({
             ox: x,
             oy: y,
@@ -97,8 +99,7 @@ export function VaporizeText({
             r: data[idx],
             g: data[idx + 1],
             b: data[idx + 2],
-            a,
-            oa: a,
+            a: alpha / 255,
             vx: 0,
             vy: 0,
             speed: 0,
@@ -114,14 +115,14 @@ export function VaporizeText({
     const density = 0.7;
 
     const start = performance.now();
-    let last = start;
+    let lastT = start;
     let raf = 0;
     let finished = false;
 
     function frame(now: number) {
       const t = (now - start) / 1000;
-      const dt = Math.min(0.05, (now - last) / 1000);
-      last = now;
+      const dt = Math.min(0.05, (now - lastT) / 1000);
+      lastT = now;
       ctx!.clearRect(0, 0, w, h);
 
       if (t < hold) {
@@ -168,7 +169,7 @@ export function VaporizeText({
       if (progress >= 1 && alive === 0) {
         if (!finished) {
           finished = true;
-          onComplete();
+          onCompleteRef.current();
         }
         return;
       }
@@ -176,7 +177,10 @@ export function VaporizeText({
     }
     raf = requestAnimationFrame(frame);
     return () => cancelAnimationFrame(raf);
-  }, [segments, onComplete, hold, vaporDuration]);
+    // Run exactly once on mount — a one-shot animation. onComplete is called
+    // via a ref so it stays current without re-triggering the effect.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />;
 }

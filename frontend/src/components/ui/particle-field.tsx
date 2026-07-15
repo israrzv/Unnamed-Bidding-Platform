@@ -14,13 +14,28 @@ export function setParticleAccent(rgb: RGB | null) {
   accent = rgb ?? { ...DEFAULT_ACCENT };
 }
 
+const PURPLE: RGB = { r: 168, g: 85, b: 247 };
+const GREEN: RGB = { r: 52, g: 211, b: 153 };
+
+/** Left→right purple→green blend for the login "gradient" background. Where
+ *  the two hues meet in the middle they mix into a fresh teal. */
+function blendAt(x: number, w: number): RGB {
+  const t = Math.max(0, Math.min(1, x / w));
+  return {
+    r: Math.round(PURPLE.r + (GREEN.r - PURPLE.r) * t),
+    g: Math.round(PURPLE.g + (GREEN.g - PURPLE.g) * t),
+    b: Math.round(PURPLE.b + (GREEN.b - PURPLE.b) * t),
+  };
+}
+
 /**
  * App-wide interactive background: a slow drifting field of particles linked by
  * thin lines. The cursor pushes nearby particles away and brightens the links
- * around it. The canvas is transparent so whatever sits behind it (page
- * background / zone gradient) shows through. Colour is driven by `accent`.
+ * around it. The canvas is transparent so whatever sits behind it shows
+ * through. Colour is driven by `accent`, or by a left→right purple→green blend
+ * when `gradient` is set (used on the login screen).
  */
-export function ParticleField() {
+export function ParticleField({ gradient = false }: { gradient?: boolean }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -46,9 +61,10 @@ export function ParticleField() {
         this.size = size;
       }
       draw() {
+        const c = gradient ? blendAt(this.x, canvas!.width) : accent;
         ctx!.beginPath();
         ctx!.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
-        ctx!.fillStyle = `rgba(${accent.r}, ${accent.g}, ${accent.b}, 0.6)`;
+        ctx!.fillStyle = `rgba(${c.r}, ${c.g}, ${c.b}, 0.6)`;
         ctx!.fill();
       }
       update() {
@@ -104,9 +120,12 @@ export function ParticleField() {
               const mdy = particles[a].y - mouse.y;
               nearMouse = Math.sqrt(mdx * mdx + mdy * mdy) < mouse.radius;
             }
+            const lc = gradient
+              ? blendAt((particles[a].x + particles[b].x) / 2, canvas!.width)
+              : accent;
             ctx!.strokeStyle = nearMouse
               ? `rgba(255, 255, 255, ${opacity})`
-              : `rgba(${accent.r}, ${accent.g}, ${accent.b}, ${opacity * 0.5})`;
+              : `rgba(${lc.r}, ${lc.g}, ${lc.b}, ${opacity * 0.5})`;
             ctx!.lineWidth = 1;
             ctx!.beginPath();
             ctx!.moveTo(particles[a].x, particles[a].y);

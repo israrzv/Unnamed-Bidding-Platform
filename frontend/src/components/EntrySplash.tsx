@@ -5,32 +5,28 @@ import { VaporizeText } from "@/components/ui/vaporize-text";
 
 type Phase = "vapor" | "reveal" | "done";
 
-/** Module guard so the splash schedules exactly once per load. */
+/**
+ * Module guard: set true after the splash has played for this page load. It
+ * survives client-side navigation (the SPA never reloads the module) but resets
+ * on a real page load / reload — so the intro plays every time you ENTER the
+ * site, but not when moving between pages inside the app.
+ */
 let entryHasRun = false;
 
 /**
- * App-entry splash. Plays once per browser-tab session, only after a user
- * enters the app (guest / Google / email sign-in all land on an (app) page).
- * Shows "BidFair" and dissolves it into fine particles, then reveals the app.
+ * App-entry splash: shows "BidFair" and dissolves it into fine particles, then
+ * slides away to reveal the app. Plays on every fresh entry into the app
+ * (first paint of a full page load), whether the user just logged in or is
+ * already signed in and re-opening the site.
  */
 export function EntrySplash() {
-  const [phase, setPhase] = useState<Phase>("vapor");
+  // Decided synchronously so client-side navigations (entryHasRun already true)
+  // render nothing — no overlay flash between app pages. On a full page load
+  // entryHasRun is false, so SSR + first paint show the splash (no app flash).
+  const [phase, setPhase] = useState<Phase>(() => (entryHasRun ? "done" : "vapor"));
 
   useEffect(() => {
-    if (entryHasRun) {
-      setPhase("done");
-      return;
-    }
     entryHasRun = true;
-    try {
-      if (sessionStorage.getItem("bidfair:entry-seen-v3")) {
-        setPhase("done");
-        return;
-      }
-      sessionStorage.setItem("bidfair:entry-seen-v3", "1");
-    } catch {
-      /* ignore */
-    }
   }, []);
 
   if (phase === "done") return null;
@@ -48,7 +44,6 @@ export function EntrySplash() {
           { text: "Fair", color: "#34d399" },
         ]}
         onComplete={() => {
-          // Slide the splash off to the left, revealing the app underneath.
           setPhase("reveal");
           setTimeout(() => setPhase("done"), 700);
         }}

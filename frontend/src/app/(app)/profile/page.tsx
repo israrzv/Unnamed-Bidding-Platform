@@ -27,7 +27,7 @@ export default async function ProfilePage() {
           </div>
           <div>
             <h1 className="text-2xl font-semibold tracking-tight text-white">{displayName}</h1>
-            <p className="text-sm text-zinc-400">The Vault</p>
+            <p className="text-sm text-zinc-400">Your profile</p>
           </div>
         </div>
         <SignOutButton className="rounded-full border border-zinc-800 px-4 py-1.5 text-sm text-zinc-400 transition-colors hover:border-rose-500/40 hover:text-rose-400 disabled:opacity-50" />

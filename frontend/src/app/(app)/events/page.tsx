@@ -2,8 +2,19 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, MapPin } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  MapPin,
+  Search,
+  SlidersHorizontal,
+  ArrowRight,
+  Mail,
+} from "lucide-react";
+import { ARENA_CATALOG } from "@/lib/arenas";
 import { TiltCard } from "@/components/TiltCard";
+import { Reveal } from "@/components/ui/Reveal";
+import { FeatureRow } from "@/components/ui/FeatureRow";
 
 const CARD = "rounded-xl border border-zinc-800/80 bg-zinc-900/40 backdrop-blur-md";
 const WEEKDAYS = ["S", "M", "T", "W", "T", "F", "S"];
@@ -12,27 +23,61 @@ const MONTHS = [
   "July", "August", "September", "October", "November", "December",
 ];
 
-type Drop = { id: string; title: string; venue: string };
+type Evt = {
+  id: string;
+  title: string;
+  venue: string;
+  day: number;
+  month: string;
+  time: string;
+  img: string;
+  popularity: number;
+  past: boolean;
+};
 
-function keyOf(y: number, m: number, d: number) {
-  return `${y}-${m}-${d}`;
-}
+const EVENTS: Evt[] = [
+  ...ARENA_CATALOG.map((a, i) => ({
+    id: a.id,
+    title: a.name,
+    venue: a.venue,
+    day: Number(a.day),
+    month: a.month,
+    time: a.time,
+    img: a.img,
+    popularity: ARENA_CATALOG.length - i,
+    past: false,
+  })),
+  {
+    id: "aurora-past",
+    title: "Aurora Live — Encore",
+    venue: "Bengaluru",
+    day: 2,
+    month: "JUL",
+    time: "8:00 PM",
+    img: "/categories/theatre.jpg",
+    popularity: 2,
+    past: true,
+  },
+  {
+    id: "pulse-past",
+    title: "Pulse Festival — Finale",
+    venue: "Goa",
+    day: 5,
+    month: "JUL",
+    time: "6:00 PM",
+    img: "/categories/sports.jpg",
+    popularity: 1,
+    past: true,
+  },
+];
 
 export default function EventsPage() {
   const today = useMemo(() => new Date(), []);
   const [view, setView] = useState({ year: today.getFullYear(), month: today.getMonth() });
-  const [selected, setSelected] = useState<string | null>(null);
-
-  // Mock drops seeded into the current month so the calendar always has data.
-  const drops = useMemo<Record<string, Drop[]>>(() => {
-    const y = today.getFullYear();
-    const m = today.getMonth();
-    return {
-      [keyOf(y, m, 12)]: [{ id: "neon-nights", title: "Neon Nights — Arena Drop", venue: "NSCI Dome, Mumbai" }],
-      [keyOf(y, m, 18)]: [{ id: "desert-mirage", title: "Desert Mirage — Day 1", venue: "Jaipur" }],
-      [keyOf(y, m, 25)]: [{ id: "rooftop-3", title: "Rooftop Sessions Vol. 3", venue: "Delhi" }],
-    };
-  }, [today]);
+  const [selectedDay, setSelectedDay] = useState<number | null>(null);
+  const [tab, setTab] = useState<"upcoming" | "past">("upcoming");
+  const [query, setQuery] = useState("");
+  const [sort, setSort] = useState<"popular" | "least">("popular");
 
   const firstWeekday = new Date(view.year, view.month, 1).getDay();
   const daysInMonth = new Date(view.year, view.month + 1, 0).getDate();
@@ -40,131 +85,221 @@ export default function EventsPage() {
     ...Array.from({ length: firstWeekday }, () => null),
     ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
   ];
+  const eventDays = new Set(EVENTS.map((e) => e.day));
 
   function shiftMonth(delta: number) {
-    setSelected(null);
     setView((v) => {
       const d = new Date(v.year, v.month + delta, 1);
       return { year: d.getFullYear(), month: d.getMonth() };
     });
   }
 
-  const catalog: { key: string; drop: Drop; day: number }[] = selected
-    ? (drops[selected] ?? []).map((drop) => ({ key: selected, drop, day: Number(selected.split("-")[2]) }))
-    : Object.entries(drops)
-        .filter(([k]) => k.startsWith(`${view.year}-${view.month}-`))
-        .flatMap(([k, list]) => list.map((drop) => ({ key: k, drop, day: Number(k.split("-")[2]) })));
+  const list = EVENTS.filter((e) => (tab === "past" ? e.past : !e.past))
+    .filter((e) => (selectedDay ? e.day === selectedDay : true))
+    .filter((e) => {
+      const q = query.trim().toLowerCase();
+      return q ? (e.title + e.venue).toLowerCase().includes(q) : true;
+    })
+    .sort((a, b) => (sort === "popular" ? b.popularity - a.popularity : a.popularity - b.popularity));
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-white">Events</h1>
-        <p className="mt-1 text-zinc-400">A curated drop calendar. Pick a date to filter.</p>
-      </div>
+    <div className="space-y-14">
+      <Reveal>
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-white">Events</h1>
+          <p className="mt-1 text-zinc-400">Discover upcoming events and exclusive drops.</p>
+        </div>
+      </Reveal>
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <Reveal>
+        <div className="relative max-w-xl">
+          <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search by artist, event or venue..."
+            suppressHydrationWarning
+            className="w-full rounded-lg border border-zinc-800 bg-zinc-900/50 py-3 pl-11 pr-4 text-sm text-white placeholder:text-zinc-500 outline-none focus:border-emerald-500/50"
+          />
+        </div>
+      </Reveal>
+
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,360px)_1fr]">
         {/* Calendar */}
-        <div className={`${CARD} p-6`}>
-          <div className="flex items-center justify-between">
-            <h2 className="font-medium text-white">
-              {MONTHS[view.month]} {view.year}
-            </h2>
-            <div className="flex items-center gap-1">
+        <Reveal>
+          <div className={`${CARD} p-6`}>
+            <div className="flex items-center justify-between">
+              <h2 className="font-semibold text-white">
+                {MONTHS[view.month]} {view.year}
+              </h2>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => shiftMonth(-1)}
+                  className="rounded-md p-1.5 text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-white"
+                  aria-label="Previous month"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={() => shiftMonth(1)}
+                  className="rounded-md p-1.5 text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-white"
+                  aria-label="Next month"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+
+            <div className="mt-5 grid grid-cols-7 gap-1 text-center">
+              {WEEKDAYS.map((w, i) => (
+                <div key={i} className="pb-2 text-xs font-medium text-zinc-600">
+                  {w}
+                </div>
+              ))}
+              {cells.map((day, i) => {
+                if (day === null) return <div key={i} />;
+                const hasEvent = eventDays.has(day);
+                const isSelected = selectedDay === day;
+                return (
+                  <button
+                    key={i}
+                    onClick={() => setSelectedDay(isSelected ? null : day)}
+                    className={`relative flex aspect-square items-center justify-center rounded-lg text-sm transition-colors ${
+                      isSelected
+                        ? "text-emerald-300 ring-1 ring-emerald-400"
+                        : "text-zinc-300 hover:bg-zinc-800"
+                    }`}
+                  >
+                    {day}
+                    {hasEvent && !isSelected && (
+                      <span className="absolute bottom-1.5 h-1 w-1 rounded-full bg-emerald-400" />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+
+            {selectedDay && (
               <button
-                onClick={() => shiftMonth(-1)}
-                className="rounded-md p-1.5 text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-white"
-                aria-label="Previous month"
+                onClick={() => setSelectedDay(null)}
+                className="mt-4 text-xs text-zinc-500 transition-colors hover:text-zinc-300"
               >
-                <ChevronLeft className="h-4 w-4" />
+                Clear date filter
               </button>
+            )}
+          </div>
+        </Reveal>
+
+        {/* List */}
+        <div>
+          <Reveal>
+            <div className="flex items-center justify-between border-b border-zinc-800/80 pb-3">
+              <div className="flex items-center gap-6">
+                {(["upcoming", "past"] as const).map((t) => (
+                  <button
+                    key={t}
+                    onClick={() => setTab(t)}
+                    className={`relative text-sm capitalize transition-colors ${
+                      tab === t ? "text-white" : "text-zinc-500 hover:text-zinc-300"
+                    }`}
+                  >
+                    {t}
+                    {tab === t && (
+                      <span className="absolute -bottom-3 left-0 h-0.5 w-full rounded-full bg-emerald-400" />
+                    )}
+                  </button>
+                ))}
+              </div>
               <button
-                onClick={() => shiftMonth(1)}
-                className="rounded-md p-1.5 text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-white"
-                aria-label="Next month"
+                onClick={() => setSort((s) => (s === "popular" ? "least" : "popular"))}
+                className="inline-flex items-center gap-2 rounded-lg border border-zinc-800 px-3 py-1.5 text-xs text-zinc-300 transition-colors hover:border-zinc-600"
               >
-                <ChevronRight className="h-4 w-4" />
+                <SlidersHorizontal className="h-3.5 w-3.5" />
+                {sort === "popular" ? "Most popular" : "Least popular"}
               </button>
             </div>
-          </div>
+          </Reveal>
 
-          <div className="mt-5 grid grid-cols-7 gap-1 text-center">
-            {WEEKDAYS.map((w, i) => (
-              <div key={i} className="pb-2 text-xs font-medium text-zinc-600">
-                {w}
-              </div>
-            ))}
-            {cells.map((day, i) => {
-              if (day === null) return <div key={i} />;
-              const k = keyOf(view.year, view.month, day);
-              const hasDrop = Boolean(drops[k]);
-              const isSelected = selected === k;
-              const isToday =
-                day === today.getDate() &&
-                view.month === today.getMonth() &&
-                view.year === today.getFullYear();
-              return (
-                <button
-                  key={i}
-                  onClick={() => setSelected(isSelected ? null : k)}
-                  className={`relative flex aspect-square items-center justify-center rounded-lg text-sm transition-colors ${
-                    isSelected
-                      ? "bg-zinc-100 font-medium text-zinc-900"
-                      : "text-zinc-300 hover:bg-zinc-800"
-                  } ${isToday && !isSelected ? "ring-1 ring-zinc-700" : ""}`}
-                >
-                  {day}
-                  {hasDrop && !isSelected && (
-                    <span className="absolute bottom-1.5 h-1 w-1 rounded-full bg-violet-500" />
-                  )}
-                </button>
-              );
-            })}
-          </div>
-
-          {selected && (
-            <button
-              onClick={() => setSelected(null)}
-              className="mt-4 text-xs text-zinc-500 transition-colors hover:text-zinc-300"
-            >
-              Clear selection
-            </button>
-          )}
-        </div>
-
-        {/* Catalog */}
-        <div>
-          <h2 className="border-b border-zinc-800/80 pb-3 text-xs font-medium uppercase tracking-widest text-zinc-500">
-            {selected ? "Drops on this date" : "This month"}
-          </h2>
           <div className="mt-4 space-y-3">
-            {catalog.length === 0 ? (
-              <div className={`${CARD} p-6 text-sm text-zinc-500`}>No drops on this date.</div>
+            {list.length === 0 ? (
+              <div className={`${CARD} p-6 text-sm text-zinc-500`}>No events found.</div>
             ) : (
-              catalog.map(({ drop, day }) => (
-                <TiltCard key={drop.id}>
-                  <Link
-                    href={`/arena/${drop.id}`}
-                    className={`${CARD} group flex items-stretch overflow-hidden transition-colors hover:border-zinc-700`}
-                  >
-                    <div className="flex w-24 shrink-0 items-center justify-center border-r border-zinc-800/80 bg-zinc-900/60 text-center">
-                      <div>
-                        <p className="text-lg font-semibold text-white">{day}</p>
-                        <p className="text-xs text-zinc-500">{MONTHS[view.month].slice(0, 3)}</p>
+              list.map((e, i) => (
+                <Reveal key={e.id} delay={i * 60}>
+                  <TiltCard>
+                    <div className={`${CARD} group flex items-center gap-4 p-3 transition-colors hover:border-emerald-500/40`}>
+                      <div className="flex flex-col items-center justify-center rounded-lg bg-zinc-950/60 px-3 py-2">
+                        <span className="text-lg font-bold leading-none text-white">{e.day}</span>
+                        <span className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">
+                          {e.month}
+                        </span>
                       </div>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={e.img} alt="" className="h-14 w-16 shrink-0 rounded-lg object-cover" />
+                      <div className="min-w-0 flex-1">
+                        <span
+                          className={`rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
+                            e.past
+                              ? "bg-zinc-800 text-zinc-400"
+                              : "bg-emerald-500/15 text-emerald-400"
+                          }`}
+                        >
+                          {e.past ? "Past" : "Upcoming"}
+                        </span>
+                        <h3 className="mt-1 truncate font-medium text-white">{e.title}</h3>
+                        <p className="mt-0.5 flex items-center gap-1 text-xs text-zinc-500">
+                          <MapPin className="h-3 w-3" /> {e.venue}
+                          <span className="mx-1 text-zinc-700">·</span>
+                          {e.time} · ---- expected
+                        </p>
+                      </div>
+                      <Link
+                        href={`/arena/${e.id}`}
+                        className="hidden shrink-0 items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-zinc-950 transition-colors hover:bg-emerald-400 sm:inline-flex"
+                      >
+                        View Event <ArrowRight className="h-3.5 w-3.5" />
+                      </Link>
                     </div>
-                    <div className="flex-1 p-4">
-                      <h3 className="font-medium text-white">{drop.title}</h3>
-                      <p className="mt-1 flex items-center gap-1 text-sm text-zinc-500">
-                        <MapPin className="h-3.5 w-3.5" /> {drop.venue}
-                      </p>
-                    </div>
-                  </Link>
-                </TiltCard>
+                  </TiltCard>
+                </Reveal>
               ))
             )}
           </div>
         </div>
       </div>
+
+      <Reveal>
+        <FeatureRow />
+      </Reveal>
+
+      {/* Newsletter */}
+      <Reveal>
+        <div className={`${CARD} flex flex-col items-start justify-between gap-4 p-6 sm:flex-row sm:items-center`}>
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-emerald-500/20 bg-emerald-500/10 text-emerald-400">
+              <Mail className="h-5 w-5" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-white">Stay in the loop</p>
+              <p className="text-sm text-zinc-500">Get early access to drops and exclusive updates.</p>
+            </div>
+          </div>
+          <form
+            onSubmit={(e) => e.preventDefault()}
+            className="flex w-full items-center gap-2 sm:w-auto"
+          >
+            <input
+              type="email"
+              placeholder="Enter your email"
+              suppressHydrationWarning
+              className="flex-1 rounded-lg border border-zinc-800 bg-zinc-950/60 px-4 py-2.5 text-sm text-white placeholder:text-zinc-500 outline-none focus:border-emerald-500/50 sm:w-64"
+            />
+            <button className="rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-zinc-950 transition-colors hover:bg-emerald-400">
+              Subscribe
+            </button>
+          </form>
+        </div>
+      </Reveal>
     </div>
   );
 }

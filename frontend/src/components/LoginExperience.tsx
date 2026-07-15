@@ -4,8 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { ParticleTextEffect } from "@/components/ui/interactive-text-particle";
-import { StripesBackground } from "@/components/StripesBackground";
-import { RainbowBackground } from "@/components/RainbowBackground";
+import { ParticleField } from "@/components/ui/particle-field";
 
 const AUTH_ERRORS: Record<string, string> = {
   auth_failed: "Sign-in failed. Please try again.",
@@ -25,8 +24,6 @@ export function LoginExperience({ initialError }: { initialError?: string }) {
 
   const showRest = email.trim().length > 0;
 
-  // Slide the whole page out to the left, then navigate — smooth hand-off to
-  // the intro splash / app instead of a hard cut.
   function leave(go: () => void) {
     setExiting(true);
     setTimeout(go, 450);
@@ -34,7 +31,6 @@ export function LoginExperience({ initialError }: { initialError?: string }) {
 
   async function signInWithGoogle() {
     setError(null);
-    // Go straight to Google — no pre-redirect animation.
     const { error } = await createClient().auth.signInWithOAuth({
       provider: "google",
       options: { redirectTo: `${window.location.origin}/auth/callback` },
@@ -91,25 +87,33 @@ export function LoginExperience({ initialError }: { initialError?: string }) {
 
   return (
     <div
-      className={`transition-all duration-500 ease-in-out ${
+      className={`relative min-h-screen transition-all duration-500 ease-in-out ${
         exiting ? "-translate-x-full opacity-0" : "translate-x-0 opacity-100"
       }`}
     >
-      {mode === "login" ? <StripesBackground /> : <RainbowBackground />}
+      {/* Interactive purple→green particle field + soft corner glows */}
+      <ParticleField gradient />
+      <div className="pointer-events-none fixed inset-0 -z-20 bg-zinc-950" />
+      <div className="pointer-events-none fixed -left-40 top-0 -z-10 h-[70vh] w-[70vh] rounded-full bg-fuchsia-600/20 blur-[130px]" />
+      <div className="pointer-events-none fixed -right-40 bottom-0 -z-10 h-[70vh] w-[70vh] rounded-full bg-emerald-500/20 blur-[130px]" />
 
       <div className="flex min-h-screen flex-col items-center justify-center px-4 py-10">
-        {/* Interactive particle title */}
-        <div className="h-56 w-full max-w-4xl sm:h-72">
+        {/* Interactive particle title (magenta → green), keeps hover repel */}
+        <div className="h-52 w-full max-w-4xl sm:h-64">
           <ParticleTextEffect
             text="BIDFAIR"
-            colors={["34d399", "22d3ee", "60a5fa", "818cf8", "a78bfa"]}
+            colors={["d946ef", "c026d3", "a855f7", "6366f1", "14b8a6", "22c55e", "34d399"]}
             particleDensity={4}
-            className="h-full w-full animate-hue"
+            className="h-full w-full"
           />
         </div>
 
-        {/* Minimal auth — no box */}
-        <div className="mt-10 w-full max-w-xs space-y-3">
+        <p className="-mt-2 text-center text-sm font-medium uppercase tracking-[0.35em] text-zinc-400">
+          Fair price. Real fans. <span className="text-emerald-400">No scalpers.</span>
+        </p>
+
+        {/* Auth */}
+        <div className="mt-10 w-full max-w-sm space-y-3">
           <form onSubmit={handleSubmit} className="space-y-3">
             <input
               name="email"
@@ -119,7 +123,7 @@ export function LoginExperience({ initialError }: { initialError?: string }) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               suppressHydrationWarning
-              className="w-full rounded-lg border border-zinc-700/70 bg-zinc-950/40 px-4 py-2.5 text-white placeholder:text-zinc-500 outline-none backdrop-blur-sm focus:border-emerald-400/60"
+              className="w-full rounded-lg border border-zinc-700/70 bg-zinc-950/50 px-4 py-3 text-white placeholder:text-zinc-500 outline-none backdrop-blur-sm focus:border-emerald-400/60"
             />
 
             <div
@@ -135,7 +139,7 @@ export function LoginExperience({ initialError }: { initialError?: string }) {
                   autoComplete="username"
                   required={showRest}
                   suppressHydrationWarning
-                  className="w-full rounded-lg border border-zinc-700/70 bg-zinc-950/40 px-4 py-2.5 text-white placeholder:text-zinc-500 outline-none backdrop-blur-sm focus:border-emerald-400/60"
+                  className="w-full rounded-lg border border-zinc-700/70 bg-zinc-950/50 px-4 py-3 text-white placeholder:text-zinc-500 outline-none backdrop-blur-sm focus:border-emerald-400/60"
                 />
               )}
               <input
@@ -146,7 +150,7 @@ export function LoginExperience({ initialError }: { initialError?: string }) {
                 minLength={mode === "signup" ? 8 : undefined}
                 required={showRest}
                 suppressHydrationWarning
-                className="w-full rounded-lg border border-zinc-700/70 bg-zinc-950/40 px-4 py-2.5 text-white placeholder:text-zinc-500 outline-none backdrop-blur-sm focus:border-emerald-400/60"
+                className="w-full rounded-lg border border-zinc-700/70 bg-zinc-950/50 px-4 py-3 text-white placeholder:text-zinc-500 outline-none backdrop-blur-sm focus:border-emerald-400/60"
               />
             </div>
 
@@ -156,7 +160,7 @@ export function LoginExperience({ initialError }: { initialError?: string }) {
             <button
               type="submit"
               disabled={loading || !showRest}
-              className="w-full rounded-lg bg-zinc-100 px-4 py-2.5 text-sm font-semibold text-zinc-900 transition-colors hover:bg-white disabled:opacity-40"
+              className="w-full rounded-lg bg-gradient-to-r from-fuchsia-600 to-violet-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-violet-900/30 transition-opacity hover:opacity-90 disabled:opacity-40"
             >
               {loading ? "Please wait…" : mode === "login" ? "Sign in" : "Create account"}
             </button>
@@ -166,7 +170,7 @@ export function LoginExperience({ initialError }: { initialError?: string }) {
             type="button"
             onClick={signInWithGoogle}
             disabled={loading}
-            className="flex w-full items-center justify-center gap-3 rounded-lg border border-zinc-700/70 bg-zinc-950/40 px-4 py-2.5 text-sm font-medium text-white backdrop-blur-sm transition-colors hover:bg-zinc-900/60 disabled:opacity-60"
+            className="flex w-full items-center justify-center gap-3 rounded-lg border border-zinc-700/70 bg-zinc-950/50 px-4 py-3 text-sm font-medium text-white backdrop-blur-sm transition-colors hover:bg-zinc-900/60 disabled:opacity-60"
           >
             <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.76h3.56c2.08-1.92 3.28-4.74 3.28-8.09Z" />
@@ -193,7 +197,7 @@ export function LoginExperience({ initialError }: { initialError?: string }) {
                 setError(null);
                 setNotice(null);
               }}
-              className="font-medium text-emerald-400 transition-colors hover:underline"
+              className="font-medium text-violet-400 transition-colors hover:underline"
             >
               {mode === "login" ? "Sign up" : "Sign in"}
             </button>
