@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { ParticleTextEffect } from "@/components/ui/interactive-text-particle";
-import { MatrixRain } from "@/components/ui/matrix-code-rain";
+import { LiquidBackground } from "@/components/ui/liquid-background";
 
 const AUTH_ERRORS: Record<string, string> = {
   auth_failed: "Sign-in failed. Please try again.",
@@ -91,11 +91,11 @@ export function LoginExperience({ initialError }: { initialError?: string }) {
         exiting ? "-translate-x-full opacity-0" : "translate-x-0 opacity-100"
       }`}
     >
-      {/* Purple→green matrix rain + soft corner glows */}
-      <MatrixRain gradient opacity={0.55} />
-      <div className="pointer-events-none fixed inset-0 -z-20 bg-zinc-950" />
-      <div className="pointer-events-none fixed -left-40 top-0 -z-10 h-[70vh] w-[70vh] rounded-full bg-fuchsia-600/20 blur-[130px]" />
-      <div className="pointer-events-none fixed -right-40 bottom-0 -z-10 h-[70vh] w-[70vh] rounded-full bg-emerald-500/20 blur-[130px]" />
+      {/* Purple→green liquid gradient background */}
+      <LiquidBackground
+        colors={["#1a0b2e", "#3b0f6f", "#8b2fc9", "#22c55e", "#34d399"]}
+        opacity={0.75}
+      />
 
       <div className="flex min-h-screen flex-col items-center justify-center px-4 py-10">
         {/* Interactive particle title (magenta → green), keeps hover repel */}

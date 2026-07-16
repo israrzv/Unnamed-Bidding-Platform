@@ -17,7 +17,7 @@ import {
 import { type Zone, zoneFor, ZONE } from "@/lib/zones";
 import { getArena } from "@/lib/arenas";
 import { getPledges, addPledge } from "@/lib/pledges";
-import { setMatrixAccent, type RGB } from "@/components/ui/matrix-code-rain";
+import { setBackgroundColors } from "@/components/ui/liquid-background";
 import { SeatingMap } from "@/components/ui/SeatingMap";
 import { Reveal } from "@/components/ui/Reveal";
 import { FeatureRow } from "@/components/ui/FeatureRow";
@@ -32,11 +32,11 @@ const ZONE_LADDER: { zone: Zone; sub: string }[] = [
   { zone: "red", sub: "Risk" },
 ];
 const ZONE_RANK: Record<Zone, number> = { red: 0, yellow: 1, green: 2, blue: 3 };
-const ZONE_RGB: Record<Zone, RGB> = {
-  blue: { r: 34, g: 211, b: 238 },
-  green: { r: 52, g: 211, b: 153 },
-  yellow: { r: 251, g: 191, b: 36 },
-  red: { r: 251, g: 113, b: 133 },
+const ZONE_PALETTE: Record<Zone, string[]> = {
+  blue: ["#04212a", "#0e7490", "#06b6d4", "#22d3ee", "#67e8f9"],
+  green: ["#03140d", "#064e3b", "#059669", "#10b981", "#34d399"],
+  yellow: ["#1c1405", "#92610a", "#d97706", "#f59e0b", "#fbbf24"],
+  red: ["#1f0810", "#9f1239", "#e11d48", "#f43f5e", "#fb7185"],
 };
 const ZONE_SWATCH: Record<Zone, string> = {
   blue: "bg-cyan-400",
@@ -86,8 +86,8 @@ export default function ArenaPage() {
   const tooLow = current !== null && entry <= current;
 
   useEffect(() => {
-    setMatrixAccent(zone ? ZONE_RGB[zone] : null);
-    return () => setMatrixAccent(null);
+    setBackgroundColors(zone ? ZONE_PALETTE[zone] : null);
+    return () => setBackgroundColors(null);
   }, [zone]);
 
   function placeBid() {
