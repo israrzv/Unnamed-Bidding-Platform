@@ -1,13 +1,13 @@
 import { LiveTicker } from "@/components/LiveTicker";
 import { Navbar } from "@/components/NavBar";
-import { ParticleField } from "@/components/ui/particle-field";
+import { MatrixRain } from "@/components/ui/matrix-code-rain";
 import { EntrySplash } from "@/components/EntrySplash";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <EntrySplash />
-      <ParticleField />
+      <MatrixRain />
       <LiveTicker />
       <Navbar />
       <main className="mx-auto max-w-5xl px-5 py-10 sm:px-6">{children}</main>

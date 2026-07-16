@@ -17,7 +17,7 @@ import {
 import { type Zone, zoneFor, ZONE } from "@/lib/zones";
 import { getArena } from "@/lib/arenas";
 import { getPledges, addPledge } from "@/lib/pledges";
-import { setParticleAccent, type RGB } from "@/components/ui/particle-field";
+import { setMatrixAccent, type RGB } from "@/components/ui/matrix-code-rain";
 import { SeatingMap } from "@/components/ui/SeatingMap";
 import { Reveal } from "@/components/ui/Reveal";
 import { FeatureRow } from "@/components/ui/FeatureRow";
@@ -86,8 +86,8 @@ export default function ArenaPage() {
   const tooLow = current !== null && entry <= current;
 
   useEffect(() => {
-    setParticleAccent(zone ? ZONE_RGB[zone] : null);
-    return () => setParticleAccent(null);
+    setMatrixAccent(zone ? ZONE_RGB[zone] : null);
+    return () => setMatrixAccent(null);
   }, [zone]);
 
   function placeBid() {

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { ParticleTextEffect } from "@/components/ui/interactive-text-particle";
-import { ParticleField } from "@/components/ui/particle-field";
+import { MatrixRain } from "@/components/ui/matrix-code-rain";
 
 const AUTH_ERRORS: Record<string, string> = {
   auth_failed: "Sign-in failed. Please try again.",
@@ -91,8 +91,8 @@ export function LoginExperience({ initialError }: { initialError?: string }) {
         exiting ? "-translate-x-full opacity-0" : "translate-x-0 opacity-100"
       }`}
     >
-      {/* Interactive purple→green particle field + soft corner glows */}
-      <ParticleField gradient />
+      {/* Purple→green matrix rain + soft corner glows */}
+      <MatrixRain gradient opacity={0.55} />
       <div className="pointer-events-none fixed inset-0 -z-20 bg-zinc-950" />
       <div className="pointer-events-none fixed -left-40 top-0 -z-10 h-[70vh] w-[70vh] rounded-full bg-fuchsia-600/20 blur-[130px]" />
       <div className="pointer-events-none fixed -right-40 bottom-0 -z-10 h-[70vh] w-[70vh] rounded-full bg-emerald-500/20 blur-[130px]" />
