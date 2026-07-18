@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import Image from "next/image";
 
 export interface Feature {
   id: number;
@@ -157,13 +156,11 @@ export function Features({ features, eyebrow, heading }: FeaturesProps) {
             {features[currentFeature].visual ? (
               features[currentFeature].visual
             ) : (
-              <Image
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
                 className="h-auto w-full rounded-2xl border border-zinc-800 shadow-2xl"
                 src={features[currentFeature].image ?? ""}
                 alt={features[currentFeature].title}
-                width={800}
-                height={800}
-                priority
               />
             )}
           </motion.div>
