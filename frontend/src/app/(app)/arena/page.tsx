@@ -8,7 +8,7 @@ import { getArena } from "@/lib/arenas";
 import { zoneFor, ZONE, type Zone } from "@/lib/zones";
 import { TiltCard } from "@/components/TiltCard";
 
-const CARD = "rounded-xl border border-zinc-800/80 bg-zinc-900/40 backdrop-blur-md";
+const CARD = "rounded-xl border border-zinc-800/80 bg-black";
 
 type Row = { id: string; name: string; venue: string; pledge: number; zone: Zone };
 

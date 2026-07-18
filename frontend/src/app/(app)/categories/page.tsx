@@ -27,7 +27,7 @@ export default function CategoriesPage() {
             <TiltCard>
               <Link
                 href="/events"
-                className="group block overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-900/40 transition-colors hover:border-emerald-500/40"
+                className="group block overflow-hidden rounded-2xl border border-zinc-800/80 bg-black transition-colors hover:border-emerald-500/40"
               >
                 <div className="relative h-52 w-full overflow-hidden">
                   {/* eslint-disable-next-line @next/next/no-img-element */}

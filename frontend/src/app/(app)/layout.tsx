@@ -10,10 +10,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <LiquidBackground />
       <Sidebar />
 
-      <div className="md:pl-60">
+      <div className="flex min-h-screen flex-col md:pl-60">
         <LiveTicker />
-        <main className="mx-auto max-w-6xl px-5 py-10 sm:px-8 lg:px-10">{children}</main>
-        <footer className="mt-16 border-t border-zinc-800/80 bg-black/40">
+        <main className="mx-auto w-full max-w-6xl flex-1 px-5 py-10 sm:px-8 lg:px-10">{children}</main>
+        <footer className="border-t border-zinc-800/80 bg-black/40">
           <div className="mx-auto flex max-w-6xl flex-col gap-3 px-5 py-10 text-sm sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-10">
             <p className="text-zinc-500">
               © {new Date().getFullYear()} BidFair · Fair allocations, no scalpers.

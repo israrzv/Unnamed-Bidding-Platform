@@ -6,7 +6,7 @@ import { Mail } from "lucide-react";
  *  UI only — not wired to a backend. */
 export function Newsletter() {
   return (
-    <div className="flex flex-col items-start justify-between gap-4 rounded-xl border border-zinc-800/80 bg-zinc-900/40 p-6 backdrop-blur-md sm:flex-row sm:items-center">
+    <div className="flex flex-col items-start justify-between gap-4 rounded-xl border border-zinc-800/80 bg-black p-6 sm:flex-row sm:items-center">
       <div className="group flex cursor-default items-center gap-3">
         <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-emerald-500/20 bg-emerald-500/10 text-emerald-400 transition-all duration-300 group-hover:scale-125 group-hover:-rotate-6 group-hover:border-emerald-400/60 group-hover:bg-emerald-500/20">
           <Mail className="h-5 w-5" />
@@ -24,7 +24,7 @@ export function Newsletter() {
           type="email"
           placeholder="Enter your email"
           suppressHydrationWarning
-          className="flex-1 rounded-lg border border-zinc-800 bg-zinc-950/60 px-4 py-2.5 text-sm text-white placeholder:text-zinc-500 outline-none focus:border-emerald-500/50 sm:w-64"
+          className="flex-1 rounded-lg border border-zinc-800 bg-zinc-900 px-4 py-2.5 text-sm text-white placeholder:text-zinc-500 outline-none focus:border-emerald-500/50 sm:w-64"
         />
         <button className="rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-zinc-950 transition-colors hover:bg-emerald-400">
           Subscribe

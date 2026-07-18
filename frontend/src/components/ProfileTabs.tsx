@@ -13,7 +13,7 @@ import {
   Visual3,
 } from "@/components/ui/animated-card-chart";
 
-const CARD = "rounded-xl border border-zinc-800/80 bg-zinc-900/40 backdrop-blur-md";
+const CARD = "rounded-xl border border-zinc-800/80 bg-black";
 
 const TABS = [
   { id: "identity", label: "Identity", icon: User },
@@ -191,7 +191,7 @@ function Field({
         onChange={onChange ? (e) => onChange(e.target.value) : undefined}
         readOnly={readOnly}
         suppressHydrationWarning
-        className={`mt-2 w-full rounded-lg border border-zinc-800 bg-zinc-950/60 px-3 py-2.5 text-white outline-none focus:border-zinc-600 ${
+        className={`mt-2 w-full rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2.5 text-white outline-none focus:border-zinc-600 ${
           readOnly ? "cursor-not-allowed text-zinc-400" : ""
         }`}
       />

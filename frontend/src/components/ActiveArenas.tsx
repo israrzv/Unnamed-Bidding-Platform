@@ -9,7 +9,7 @@ import { zoneFor, ZONE, type Zone } from "@/lib/zones";
 import { TiltCard } from "@/components/TiltCard";
 import { Reveal } from "@/components/ui/Reveal";
 
-const CARD = "rounded-xl border border-zinc-800/80 bg-zinc-900/40 backdrop-blur-md";
+const CARD = "rounded-xl border border-zinc-800/80 bg-black";
 
 type Row = {
   id: string;
@@ -73,7 +73,7 @@ export function ActiveArenas() {
                   href={`/arena/${r.id}`}
                   className={`${CARD} group flex items-center gap-4 p-4 transition-colors hover:border-zinc-700`}
                 >
-                  <div className="flex flex-col items-center justify-center rounded-lg bg-zinc-950/60 px-3 py-2">
+                  <div className="flex flex-col items-center justify-center rounded-lg bg-zinc-900 px-3 py-2">
                     <span className="text-xl font-bold leading-none text-white">{r.day}</span>
                     <span className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">
                       {r.month}

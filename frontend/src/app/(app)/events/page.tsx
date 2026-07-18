@@ -16,7 +16,7 @@ import { Reveal } from "@/components/ui/Reveal";
 import { FeatureRow } from "@/components/ui/FeatureRow";
 import { Newsletter } from "@/components/ui/Newsletter";
 
-const CARD = "rounded-xl border border-zinc-800/80 bg-zinc-900/40 backdrop-blur-md";
+const CARD = "rounded-xl border border-zinc-800/80 bg-black";
 const WEEKDAYS = ["S", "M", "T", "W", "T", "F", "S"];
 const MONTHS = [
   "January", "February", "March", "April", "May", "June",
@@ -228,7 +228,7 @@ export default function EventsPage() {
                 <Reveal key={e.id} delay={i * 60}>
                   <TiltCard>
                     <div className={`${CARD} group flex items-center gap-4 p-3 transition-colors hover:border-emerald-500/40`}>
-                      <div className="flex flex-col items-center justify-center rounded-lg bg-zinc-950/60 px-3 py-2">
+                      <div className="flex flex-col items-center justify-center rounded-lg bg-zinc-900 px-3 py-2">
                         <span className="text-lg font-bold leading-none text-white">{e.day}</span>
                         <span className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">
                           {e.month}

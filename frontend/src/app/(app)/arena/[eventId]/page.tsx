@@ -23,7 +23,7 @@ import { Reveal } from "@/components/ui/Reveal";
 import { FeatureRow } from "@/components/ui/FeatureRow";
 
 const MAX_PLEDGES = 3;
-const CARD = "rounded-xl border border-zinc-800/80 bg-zinc-950/70 backdrop-blur-md";
+const CARD = "rounded-xl border border-zinc-800/80 bg-black";
 
 const ZONE_LADDER: { zone: Zone; sub: string }[] = [
   { zone: "blue", sub: "Front" },
@@ -127,7 +127,7 @@ export default function ArenaPage() {
               <span className="text-zinc-500">{arena.spots} allocations left</span>
             </div>
           </div>
-          <div className="rounded-lg border border-zinc-800 bg-zinc-950/60 px-4 py-2 text-center">
+          <div className="rounded-lg border border-zinc-800 bg-zinc-900 px-4 py-2 text-center">
             <p className="text-[10px] uppercase tracking-widest text-zinc-500">Auction ends in</p>
             <p className="font-mono text-2xl font-bold text-white tabular-nums">-- : --</p>
             <p className="text-[10px] uppercase tracking-widest text-zinc-600">MM &nbsp; SS</p>
@@ -212,7 +212,7 @@ export default function ArenaPage() {
                   <p className="text-xs font-medium uppercase tracking-widest text-zinc-500">
                     {bidsLeft > 0 ? `Your next pledge · ${pledges.length + 1} of ${MAX_PLEDGES}` : "All pledges used"}
                   </p>
-                  <div className="mt-2 flex items-center rounded-lg border border-zinc-800 bg-zinc-950/60 px-4 focus-within:border-emerald-500/50">
+                  <div className="mt-2 flex items-center rounded-lg border border-zinc-800 bg-zinc-900 px-4 focus-within:border-emerald-500/50">
                     <span className="text-zinc-500">₹</span>
                     <input
                       type="number"
