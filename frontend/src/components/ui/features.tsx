@@ -144,26 +144,30 @@ export function Features({ features, eyebrow, heading }: FeaturesProps) {
           })}
         </div>
 
-        {/* Right — visual / image */}
+        {/* Right — all visuals/images stacked and crossfaded (preloaded, no
+            reload flash when switching) */}
         <div className="relative order-2 mx-auto w-full max-w-lg">
-          <motion.div
-            key={currentFeature}
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-            className="relative"
-          >
-            {features[currentFeature].visual ? (
-              features[currentFeature].visual
-            ) : (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                className="h-auto w-full rounded-2xl border border-zinc-800 shadow-2xl"
-                src={features[currentFeature].image ?? ""}
-                alt={features[currentFeature].title}
-              />
-            )}
-          </motion.div>
+          <div className="relative aspect-[4/3] w-full">
+            {features.map((f, i) => (
+              <div
+                key={f.id}
+                className={`absolute inset-0 transition-opacity duration-500 ease-out ${
+                  i === currentFeature ? "opacity-100" : "opacity-0"
+                }`}
+              >
+                {f.visual ? (
+                  f.visual
+                ) : (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={f.image ?? ""}
+                    alt={f.title}
+                    className="h-full w-full rounded-2xl border border-zinc-800 object-cover shadow-2xl"
+                  />
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
