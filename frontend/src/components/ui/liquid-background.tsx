@@ -33,9 +33,11 @@ function getSnapshot() {
 export function LiquidBackground({
   colors,
   opacity = 0.6,
+  scrim = "bg-zinc-950/55",
 }: {
   colors?: string[];
   opacity?: number;
+  scrim?: string;
 }) {
   const storeColors = useSyncExternalStore(subscribe, getSnapshot, () => DEFAULT_PALETTE);
   const palette = colors ?? storeColors;
@@ -53,7 +55,7 @@ export function LiquidBackground({
         />
       </div>
       {/* Readability scrim */}
-      <div className="absolute inset-0 bg-zinc-950/55" />
+      <div className={`absolute inset-0 ${scrim}`} />
     </div>
   );
 }

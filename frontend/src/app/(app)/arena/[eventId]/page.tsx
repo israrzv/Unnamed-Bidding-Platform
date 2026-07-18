@@ -114,10 +114,7 @@ export default function ArenaPage() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={arena.img} alt="" className="h-20 w-28 shrink-0 rounded-lg object-cover" />
           <div className="min-w-0 flex-1">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 px-2 py-0.5 text-[11px] font-medium text-emerald-400">
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" /> Live Now
-            </span>
-            <h1 className="mt-1 text-xl font-bold tracking-tight text-white sm:text-2xl">
+            <h1 className="text-xl font-bold tracking-tight text-white sm:text-2xl">
               {arena.name}
             </h1>
             <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-zinc-400">

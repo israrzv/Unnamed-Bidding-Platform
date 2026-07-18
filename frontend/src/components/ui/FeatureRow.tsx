@@ -12,9 +12,9 @@ export function FeatureRow() {
   return (
     <div className="grid gap-6 border-t border-zinc-800/80 py-8 sm:grid-cols-2 lg:grid-cols-4">
       {FEATURES.map(({ icon: Icon, title, body }) => (
-        <div key={title} className="flex items-start gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-emerald-500/20 bg-emerald-500/10 text-emerald-400">
-            <Icon className="h-5 w-5" />
+        <div key={title} className="group flex items-start gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-emerald-500/20 bg-emerald-500/10 text-emerald-400 transition-all duration-300 group-hover:scale-125 group-hover:border-emerald-400/60 group-hover:bg-emerald-500/20">
+            <Icon className="h-5 w-5 transition-transform duration-300 group-hover:scale-110" />
           </div>
           <div>
             <p className="text-sm font-semibold text-white">{title}</p>

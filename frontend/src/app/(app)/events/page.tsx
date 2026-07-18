@@ -9,12 +9,12 @@ import {
   Search,
   SlidersHorizontal,
   ArrowRight,
-  Mail,
 } from "lucide-react";
 import { ARENA_CATALOG } from "@/lib/arenas";
 import { TiltCard } from "@/components/TiltCard";
 import { Reveal } from "@/components/ui/Reveal";
 import { FeatureRow } from "@/components/ui/FeatureRow";
+import { Newsletter } from "@/components/ui/Newsletter";
 
 const CARD = "rounded-xl border border-zinc-800/80 bg-zinc-900/40 backdrop-blur-md";
 const WEEKDAYS = ["S", "M", "T", "W", "T", "F", "S"];
@@ -164,9 +164,9 @@ export default function EventsPage() {
                   <button
                     key={i}
                     onClick={() => setSelectedDay(isSelected ? null : day)}
-                    className={`relative flex aspect-square items-center justify-center rounded-lg text-sm transition-colors ${
+                    className={`relative flex aspect-square items-center justify-center rounded-lg text-sm transition-all duration-200 hover:scale-110 ${
                       isSelected
-                        ? "text-emerald-300 ring-1 ring-emerald-400"
+                        ? "bg-emerald-500/15 font-semibold text-emerald-300 ring-1 ring-emerald-400"
                         : "text-zinc-300 hover:bg-zinc-800"
                     }`}
                   >
@@ -237,16 +237,7 @@ export default function EventsPage() {
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={e.img} alt="" className="h-14 w-16 shrink-0 rounded-lg object-cover" />
                       <div className="min-w-0 flex-1">
-                        <span
-                          className={`rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
-                            e.past
-                              ? "bg-zinc-800 text-zinc-400"
-                              : "bg-emerald-500/15 text-emerald-400"
-                          }`}
-                        >
-                          {e.past ? "Past" : "Upcoming"}
-                        </span>
-                        <h3 className="mt-1 truncate font-medium text-white">{e.title}</h3>
+                        <h3 className="truncate font-medium text-white">{e.title}</h3>
                         <p className="mt-0.5 flex items-center gap-1 text-xs text-zinc-500">
                           <MapPin className="h-3 w-3" /> {e.venue}
                           <span className="mx-1 text-zinc-700">·</span>
@@ -274,31 +265,7 @@ export default function EventsPage() {
 
       {/* Newsletter */}
       <Reveal>
-        <div className={`${CARD} flex flex-col items-start justify-between gap-4 p-6 sm:flex-row sm:items-center`}>
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-emerald-500/20 bg-emerald-500/10 text-emerald-400">
-              <Mail className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-white">Stay in the loop</p>
-              <p className="text-sm text-zinc-500">Get early access to drops and exclusive updates.</p>
-            </div>
-          </div>
-          <form
-            onSubmit={(e) => e.preventDefault()}
-            className="flex w-full items-center gap-2 sm:w-auto"
-          >
-            <input
-              type="email"
-              placeholder="Enter your email"
-              suppressHydrationWarning
-              className="flex-1 rounded-lg border border-zinc-800 bg-zinc-950/60 px-4 py-2.5 text-sm text-white placeholder:text-zinc-500 outline-none focus:border-emerald-500/50 sm:w-64"
-            />
-            <button className="rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-zinc-950 transition-colors hover:bg-emerald-400">
-              Subscribe
-            </button>
-          </form>
-        </div>
+        <Newsletter />
       </Reveal>
     </div>
   );

@@ -4,6 +4,7 @@ import { ActiveArenas } from "@/components/ActiveArenas";
 import { TiltCard } from "@/components/TiltCard";
 import { Reveal } from "@/components/ui/Reveal";
 import { FeatureRow } from "@/components/ui/FeatureRow";
+import { Newsletter } from "@/components/ui/Newsletter";
 import { CATEGORIES } from "@/lib/categories";
 import {
   AnimatedCard,
@@ -129,6 +130,10 @@ export default function HomePage() {
 
       <Reveal>
         <FeatureRow />
+      </Reveal>
+
+      <Reveal>
+        <Newsletter />
       </Reveal>
     </div>
   );
